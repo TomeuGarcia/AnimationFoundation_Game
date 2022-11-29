@@ -1,0 +1,63 @@
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\OctopusController.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\UnityEditor.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\UnityEngine.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Cecil.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.DataContract.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\ExCSS.Unity.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Legacy.NRefactory.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.UNetWeaver.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.CecilTools.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Cecil.Pdb.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Cecil.Mdb.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\UnityEditor.xml
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\UnityEngine.xml
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.dll
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.pdb
+C:\Users\joanl\Documents\animation-foundations-2019-20\animation-foundations-deliveries\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csprojAssemblyReference.cache
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\OctopusController.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Cecil.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.SerializationLogic.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.DataContract.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\ExCSS.Unity.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Legacy.NRefactory.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.UNetWeaver.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.CecilTools.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Cecil.Pdb.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\Unity.Cecil.Mdb.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\UnityEditor.xml
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\bin\Debug\UnityEngine.xml
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csprojAssemblyReference.cache
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.dll
+E:\Trabajo\Classes Enti\Practicas2019-20\delivery2-2019-20\MyOctopusLibrary\OctopusController\OctopusController\obj\Debug\OctopusController.pdb
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\OctopusController.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.Cecil.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.SerializationLogic.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.DataContract.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\ExCSS.Unity.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.Legacy.NRefactory.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.UNetWeaver.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.CecilTools.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.Cecil.Pdb.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\Unity.Cecil.Mdb.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\UnityEditor.xml
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\UnityEngine.xml
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.AssemblyReference.cache
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.dll
+D:\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.pdb
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\OctopusController.dll
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.AssemblyReference.cache
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.dll
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.pdb
