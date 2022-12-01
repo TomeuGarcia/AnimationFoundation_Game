@@ -26,6 +26,9 @@ public class IK_Scorpion : MonoBehaviour
     public Transform[] legTargets;
     public Transform[] futureLegBases;
 
+    private bool _reset = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +50,7 @@ public class IK_Scorpion : MonoBehaviour
             NotifyStartWalk();
             animTime = 0;
             animPlaying = true;
+            _reset = true;
         }
 
         if (animTime < animDuration)
@@ -57,6 +61,12 @@ public class IK_Scorpion : MonoBehaviour
         {
             Body.position = EndPos.position;
             animPlaying = false;
+        }
+
+        if (_reset)
+        {
+            _myController.ResetLegs();
+            _reset = false;
         }
 
         _myController.UpdateIK();
@@ -71,7 +81,9 @@ public class IK_Scorpion : MonoBehaviour
     //Trigger Function to start the walk animation
     public void NotifyStartWalk()
     {
-
         _myController.NotifyStartWalk();
     }
+
+
+
 }

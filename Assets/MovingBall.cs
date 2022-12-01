@@ -14,6 +14,10 @@ public class MovingBall : MonoBehaviour
 
     Vector3 _dir;
 
+    private bool _interceptShotBall = false;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,6 +41,7 @@ public class MovingBall : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        _myOctopus.NotifyShoot();
+        _myOctopus.NotifyShoot(_interceptShotBall);
+        _interceptShotBall = !_interceptShotBall;
     }
 }

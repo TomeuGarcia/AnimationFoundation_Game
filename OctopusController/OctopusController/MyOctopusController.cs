@@ -9,17 +9,17 @@ namespace OctopusController
 {
     public enum TentacleMode { LEG, TAIL, TENTACLE };
 
-    public class MyOctopusController 
+    public class MyOctopusController
     {
-        
-        MyTentacleController[] _tentacles =new  MyTentacleController[4];
+
+        MyTentacleController[] _tentacles = new MyTentacleController[4];
 
         Transform _currentRegion;
         Transform _target;
 
         Transform[] _randomTargets;// = new Transform[4];
         int _tentacleToTargetIndex = -1; // start at 0 
-        bool _ballWasShot;
+        bool _interceptShotBall;
 
         float _twistMin, _twistMax;
         float _swingMin, _swingMax;
@@ -47,22 +47,27 @@ namespace OctopusController
         private Vector3[] tpos;
 
 
+        readonly float _targetDuration = 3f;
+        float _targetTimer = 0f;
+
+
+
         #region public methods
         //DO NOT CHANGE THE PUBLIC METHODS!!
 
         public float TwistMin { set => _twistMin = value; }
         public float TwistMax { set => _twistMax = value; }
-        public float SwingMin {  set => _swingMin = value; }
+        public float SwingMin { set => _swingMin = value; }
         public float SwingMax { set => _swingMax = value; }
-        
+
 
         public void TestLogging(string objectName)
         {
 
-           
-            Debug.Log("hello, I am initializing my Octopus Controller in object "+objectName);
 
-            
+            Debug.Log("hello, I am initializing my Octopus Controller in object " + objectName);
+
+
         }
 
         public void Init(Transform[] tentacleRoots, Transform[] randomTargets)
@@ -76,11 +81,11 @@ namespace OctopusController
 
 
             // foreach (Transform t in tentacleRoots)
-            for (int i = 0;  i  < tentacleRoots.Length; i++)
+            for (int i = 0; i < tentacleRoots.Length; i++)
             {
 
                 _tentacles[i] = new MyTentacleController();
-                _tentacles[i].LoadTentacleJoints(tentacleRoots[i],TentacleMode.TENTACLE);
+                _tentacles[i].LoadTentacleJoints(tentacleRoots[i], TentacleMode.TENTACLE);
 
                 //TODO: initialize any variables needed in ccd
                 tpos[i] = randomTargets[i].position;
@@ -91,30 +96,37 @@ namespace OctopusController
             }
 
             _tentacleToTargetIndex = -1;
-            _ballWasShot = false;
+            _interceptShotBall = false;
+            _targetTimer = 0f;
         }
 
-              
+
         public void NotifyTarget(Transform target, Transform region)
         {
-            if (!_ballWasShot) return;
+            if (!_interceptShotBall || _targetTimer >= _targetDuration) return;
 
             _currentRegion = region;
             _target = target;
 
-            
+
+
             if (regionToTentacleIndex.ContainsKey(region))
             {
                 _tentacleToTargetIndex = regionToTentacleIndex[region];
             }
-            
+
         }
 
-        public void NotifyShoot() {
+        public void NotifyShoot(bool interceptShotBall)
+        {
             //TODO. what happens here?
             Debug.Log("Shoot");
 
-            _ballWasShot = true;
+            _interceptShotBall = interceptShotBall;
+            if (interceptShotBall)
+            {
+                _targetTimer = 0f;
+            }
         }
 
 
@@ -122,6 +134,19 @@ namespace OctopusController
         {
             //TODO: implement logic for the correct tentacle arm to stop the ball and implement CCD method
             update_ccd();
+
+            if (_interceptShotBall)
+            {
+                if (_targetTimer < _targetDuration)
+                {
+                    _targetTimer += Time.deltaTime;
+                }
+                else
+                {
+                    _tentacleToTargetIndex = -1;
+                }
+
+            }
         }
 
 
@@ -133,15 +158,14 @@ namespace OctopusController
         #region private and internal methods
         //todo: add here anything that you need
 
-        void update_ccd() 
+        void update_ccd()
         {
 
             for (int tentacleI = 0; tentacleI < _tentacles.Length; ++tentacleI)
             {
                 Transform[] tentacleBones = _tentacles[tentacleI].Bones;
 
-                Transform tentacleTarget = (_ballWasShot && tentacleI == _tentacleToTargetIndex) ? _target : _randomTargets[tentacleI];
-
+                Transform tentacleTarget = (_interceptShotBall && tentacleI == _tentacleToTargetIndex) ? _target : _randomTargets[tentacleI];
 
                 _done = false;
                 if (!_done)
@@ -167,7 +191,6 @@ namespace OctopusController
                             else
                             {
                                 // find the components using dot and cross product
-                                //TODO4
                                 float dot = Vector3.Dot(r1, r2);
                                 _cos = dot;
                                 Vector3 cross = Vector3.Cross(r1, r2);
@@ -222,13 +245,13 @@ namespace OctopusController
                 _tentacles[tentacleI].EndEffectorSphere = tentacleBones[tentacleBones.Length - 1];
 
             }
-            
-            
+
+
 
         }
 
 
-        
+
 
         #endregion
 
