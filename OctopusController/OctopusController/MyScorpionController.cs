@@ -72,6 +72,9 @@ namespace OctopusController
         float _legsMoveDuration = 0.10f;
         bool _startedWalking = false;
 
+        private List<Vector3[]> _originalLegsPositions;
+        private List<Quaternion[]> _originalLegsRotations;
+
 
         #region public
         public void InitLegs(Transform[] LegRoots, Transform[] LegFutureBases, Transform[] LegTargets)
@@ -87,6 +90,9 @@ namespace OctopusController
             _legsBaseDestination = new Vector3[LegRoots.Length];
             _legsMoveBaseTimer = new float[LegRoots.Length];
 
+            _originalLegsPositions = new List<Vector3[]>(LegRoots.Length);
+            _originalLegsRotations = new List<Quaternion[]>(LegRoots.Length);
+
             for (int i = 0; i < LegRoots.Length; i++)
             {
                 _legs[i] = new MyTentacleController();
@@ -94,12 +100,22 @@ namespace OctopusController
 
                 //TODO: initialize anything needed for the FABRIK implementation
                 bonePositionsCopy.Add(new Vector3[_legs[i].Bones.Length]);
-                
                 legsDistances.Add(new float[_legs[i].Bones.Length - 1]);
+
+                _originalLegsPositions.Add(new Vector3[_legs[i].Bones.Length]);
+                _originalLegsRotations.Add(new Quaternion[_legs[i].Bones.Length]);
+
                 for (int boneI = 0; boneI < legsDistances[i].Length; ++boneI)
                 {
                     legsDistances[i][boneI] = Vector3.Distance(_legs[i].Bones[boneI].position, _legs[i].Bones[boneI + 1].position);
+
+                    _originalLegsPositions[i][boneI] = _legs[i].Bones[boneI].localPosition;
+                    _originalLegsRotations[i][boneI] = _legs[i].Bones[boneI].localRotation;
                 }
+                int lastBoneI = _legs[i].Bones.Length - 1;
+                _originalLegsPositions[i][lastBoneI] = _legs[i].Bones[lastBoneI].localPosition;
+                _originalLegsRotations[i][lastBoneI] = _legs[i].Bones[lastBoneI].localRotation;
+
 
                 _legIsMoving[i] = false;
 
@@ -159,8 +175,23 @@ namespace OctopusController
         //TODO: Notifies the start of the walking animation
         public void NotifyStartWalk()
         {
-            _startedWalking = true;
+            _startedWalking = true;            
         }
+
+        public void ResetLegs()
+        {
+            for (int i = 0; i < _originalLegsPositions.Count; ++i)
+            {
+                for (int j = 0; j < _originalLegsPositions[i].Length; ++j)
+                {
+                    _legs[i].Bones[j].localPosition = _originalLegsPositions[i][j];
+                    _legs[i].Bones[j].localRotation = _originalLegsRotations[i][j];
+                }
+                _legIsMoving[i] = false;
+                _legsMoveBaseTimer[i] = 0f;
+            }
+        }
+
 
         //TODO: create the apropiate animations and update the IK from the legs and tail
 

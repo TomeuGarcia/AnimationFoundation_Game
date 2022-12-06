@@ -52,9 +52,9 @@ public class IK_tentacles : MonoBehaviour
 
     }
 
-    public void NotifyShoot()
+    public void NotifyShoot(bool interceptShotBall)
     {
-        _myController.NotifyShoot();
+        _myController.NotifyShoot(interceptShotBall);
     }
 
 

@@ -27,11 +27,20 @@ public class MovingTarget: MonoBehaviour
 
     Vector3 _dir;
 
-   
-    
+    private Vector3 _startPosition;
+    public Vector3 Position => transform.position;
+
+    public void ResetPosition()
+    {
+        transform.position = _startPosition;
+    }
+
 
     //variable added just to control whether we are 
-   
+    private void Awake()
+    {
+        _startPosition = transform.position;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -49,10 +58,8 @@ public class MovingTarget: MonoBehaviour
                 float a = Random.Range(0.0f,1.0f);
                 _dir = new Vector3(a, 1 - a, 0);
             }
-
-
-
         }
+
     }
 
 

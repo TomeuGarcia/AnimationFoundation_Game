@@ -61,3 +61,10 @@ E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusCont
 E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
 E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.dll
 E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_OctopusController\OctopusController\obj\Debug\OctopusController.pdb
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\bin\Debug\OctopusController.dll
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.AssemblyReference.cache
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.dll
+E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.pdb

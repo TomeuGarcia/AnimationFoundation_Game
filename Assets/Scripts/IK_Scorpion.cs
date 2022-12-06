@@ -26,6 +26,15 @@ public class IK_Scorpion : MonoBehaviour
     public Transform[] legTargets;
     public Transform[] futureLegBases;
 
+    private bool _reset = false;
+
+    [Header("Ball")]
+    [SerializeField] private MovingBall _movingBall;
+
+    [Header("UI Controller")]
+    [SerializeField] private UI_Controller _uiController;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,13 +50,8 @@ public class IK_Scorpion : MonoBehaviour
             animTime += Time.deltaTime;
 
         NotifyTailTarget();
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            NotifyStartWalk();
-            animTime = 0;
-            animPlaying = true;
-        }
+        UpdateInputs();
+
 
         if (animTime < animDuration)
         {
@@ -57,6 +61,14 @@ public class IK_Scorpion : MonoBehaviour
         {
             Body.position = EndPos.position;
             animPlaying = false;
+        }
+
+        // Reset legs after updating Body's position, just in case
+        if (_reset)
+        {
+            _myController.ResetLegs();
+            _movingBall.ResetPosition();
+            _reset = false; // toggle reset off
         }
 
         _myController.UpdateIK();
@@ -71,7 +83,37 @@ public class IK_Scorpion : MonoBehaviour
     //Trigger Function to start the walk animation
     public void NotifyStartWalk()
     {
-
         _myController.NotifyStartWalk();
     }
+
+
+    private void UpdateInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _uiController.ResetStrengthSlider();
+            
+            animTime = 0;
+            animPlaying = false;
+            _reset = true;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            _uiController.UpdateStrengthSlider();
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            StartShootBall();
+        }
+    }
+
+    public void StartShootBall()
+    {
+        animPlaying = true;
+        NotifyStartWalk();
+        _movingBall.SetShootStrength(_uiController.GetStrengthPer1());
+    }
+
+
+
 }
