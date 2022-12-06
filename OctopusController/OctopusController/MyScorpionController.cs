@@ -186,7 +186,6 @@ namespace OctopusController
                 {
                     _legs[i].Bones[j].localPosition = _originalLegsPositions[i][j];
                     _legs[i].Bones[j].localRotation = _originalLegsRotations[i][j];
-                    Debug.Log(_legs[i].Bones[j].gameObject.name);
                 }
                 _legIsMoving[i] = false;
                 _legsMoveBaseTimer[i] = 0f;

@@ -31,6 +31,9 @@ public class IK_Scorpion : MonoBehaviour
     [Header("Ball")]
     [SerializeField] private MovingBall _movingBall;
 
+    [Header("UI Controller")]
+    [SerializeField] private UI_Controller _uiController;
+
 
     // Start is called before the first frame update
     void Start()
@@ -47,14 +50,8 @@ public class IK_Scorpion : MonoBehaviour
             animTime += Time.deltaTime;
 
         NotifyTailTarget();
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            NotifyStartWalk();
-            animTime = 0;
-            animPlaying = true;
-            _reset = true;
-        }
+        UpdateInputs();
+
 
         if (animTime < animDuration)
         {
@@ -87,6 +84,34 @@ public class IK_Scorpion : MonoBehaviour
     public void NotifyStartWalk()
     {
         _myController.NotifyStartWalk();
+    }
+
+
+    private void UpdateInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _uiController.ResetStrengthSlider();
+            
+            animTime = 0;
+            animPlaying = false;
+            _reset = true;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            _uiController.UpdateStrengthSlider();
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            StartShootBall();
+        }
+    }
+
+    public void StartShootBall()
+    {
+        animPlaying = true;
+        NotifyStartWalk();
+        _movingBall.SetShootStrength(_uiController.GetStrengthPer1());
     }
 
 
