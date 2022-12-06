@@ -17,11 +17,13 @@ public class MovingBall : MonoBehaviour
     private bool _interceptShotBall = false;
 
 
+    private Vector3 _startPosition;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        _startPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -44,4 +46,10 @@ public class MovingBall : MonoBehaviour
         _myOctopus.NotifyShoot(_interceptShotBall);
         _interceptShotBall = !_interceptShotBall;
     }
+
+    public void ResetPosition()
+    {
+        transform.position = _startPosition;
+    }
+
 }

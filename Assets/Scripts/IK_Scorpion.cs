@@ -28,6 +28,9 @@ public class IK_Scorpion : MonoBehaviour
 
     private bool _reset = false;
 
+    [Header("Ball")]
+    [SerializeField] private MovingBall _movingBall;
+
 
     // Start is called before the first frame update
     void Start()
@@ -63,10 +66,12 @@ public class IK_Scorpion : MonoBehaviour
             animPlaying = false;
         }
 
+        // Reset legs after updating Body's position, just in case
         if (_reset)
         {
             _myController.ResetLegs();
-            _reset = false;
+            _movingBall.ResetPosition();
+            _reset = false; // toggle reset off
         }
 
         _myController.UpdateIK();
