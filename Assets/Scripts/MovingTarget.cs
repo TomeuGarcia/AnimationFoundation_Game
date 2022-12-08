@@ -30,6 +30,9 @@ public class MovingTarget: MonoBehaviour
     private Vector3 _startPosition;
     public Vector3 Position => transform.position;
 
+    public bool canMove = false;
+
+
     public void ResetPosition()
     {
         transform.position = _startPosition;
@@ -68,7 +71,7 @@ public class MovingTarget: MonoBehaviour
 
         transform.rotation = Quaternion.identity;
 
-        if (_mode == MovingMode.USERTARGET)
+        if (_mode == MovingMode.USERTARGET && canMove)
         {
             //get the Input from Horizontal axis
             float horizontalInput = Input.GetAxis("Horizontal");
@@ -76,7 +79,8 @@ public class MovingTarget: MonoBehaviour
             float verticalInput = Input.GetAxis("Vertical");
 
             //update the position
-            transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, verticalInput * _movementSpeed * Time.deltaTime, 0);
+            transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, 
+                                                                   verticalInput * _movementSpeed * Time.deltaTime, 0);
 
        
         }

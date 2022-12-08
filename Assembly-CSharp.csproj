@@ -61,8 +61,8 @@
     <Compile Include="Assets\Scripts\NotifyRegion.cs" />
     <Compile Include="Assets\Scripts\IK_Scorpion.cs" />
     <Compile Include="Assets\MovingBall.cs" />
-    <Compile Include="Assets\Scripts\IK_tentacles.cs" />
     <Compile Include="Assets\Scripts\Delivery3_Exercises\UI_Controller.cs" />
+    <Compile Include="Assets\Scripts\IK_tentacles.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

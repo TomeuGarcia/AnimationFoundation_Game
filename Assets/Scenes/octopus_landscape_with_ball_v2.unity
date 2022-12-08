@@ -4586,6 +4586,7 @@ MonoBehaviour:
   _mode: 1
   _movementSpeed: 5
   _region: {fileID: 0}
+  canMove: 0
 --- !u!135 &1030194655
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5445,6 +5446,7 @@ MonoBehaviour:
   _mode: 1
   _movementSpeed: 5
   _region: {fileID: 0}
+  canMove: 0
 --- !u!135 &1418656082
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -6656,6 +6658,7 @@ MonoBehaviour:
   _mode: 1
   _movementSpeed: 5
   _region: {fileID: 0}
+  canMove: 0
 --- !u!135 &1867166541
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -6811,7 +6814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 70f145abed0b4ae48acf34cbafba0570, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -127.07
+      value: -124.12
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 70f145abed0b4ae48acf34cbafba0570, type: 3}
       propertyPath: m_LocalPosition.y
