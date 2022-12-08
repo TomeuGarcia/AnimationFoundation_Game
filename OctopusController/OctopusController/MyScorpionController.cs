@@ -50,7 +50,7 @@ namespace OctopusController
         public float DeltaGradient = 0.1f; // Used to simulate gradient (degrees)
         public float LearningRate = 4.0f; // How much we move depending on the gradient
 
-        public float StopThreshold = 0.1f; // If closer than this, it stops
+        public float StopThreshold = 0.01f; // If closer than this, it stops
         public float SlowdownThreshold = 0.25f; // If closer than this, it linearly slows down
 
 
@@ -71,6 +71,7 @@ namespace OctopusController
         float[] _legsMoveBaseTimer;
         float _legsMoveDuration = 0.10f;
         bool _startedWalking = false;
+        bool _updateTail = true;
 
         private List<Vector3[]> _originalLegsPositions;
         private List<Quaternion[]> _originalLegsRotations;
@@ -175,7 +176,13 @@ namespace OctopusController
         //TODO: Notifies the start of the walking animation
         public void NotifyStartWalk()
         {
-            _startedWalking = true;            
+            _startedWalking = true;
+            _updateTail = true;
+        }
+
+        public void NotifyStopWalk()
+        {
+            _updateTail = false;
         }
 
         public void ResetLegs()
@@ -368,7 +375,7 @@ namespace OctopusController
         //TODO: implement Gradient Descent method to move tail if necessary
         private void updateTail()
         {
-            if (tailTarget != null)
+            if (tailTarget != null && _updateTail)
             {
                 if (Vector3.Distance(tailTarget.position, tailEndEffector.position) > StopThreshold)
                 {

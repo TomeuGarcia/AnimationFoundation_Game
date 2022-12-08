@@ -7,6 +7,12 @@ public class MovingBall : MonoBehaviour
     [SerializeField]
     IK_tentacles _myOctopus;
 
+    [SerializeField]
+    IK_Scorpion _myScorpion;
+
+    [Header("UI Controller")]
+    [SerializeField] private UI_Controller _uiController;
+
     [Header("Blue Target")]
     [SerializeField] private MovingTarget _blueTarget;
 
@@ -29,6 +35,18 @@ public class MovingBall : MonoBehaviour
 
     private float _shootStrengthPer1 = 0f;
 
+    float _angularVelocity;
+    Vector3 _rotationAxis;
+    private readonly float _maxRotationSpeed = 100f;
+    private readonly float _minRotationSpeed = 0f;
+
+    public readonly float ballRadius = 0.0016f;
+
+
+    public Vector3 Position => transform.position;
+    public Vector3 Forward => transform.forward;
+    public Vector3 Right => transform.right;
+
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +63,7 @@ public class MovingBall : MonoBehaviour
         {
             transform.position = GetPositionInTime();
             _shootTime += Time.deltaTime;
+            RotateBall();
         }
         else
         {
@@ -69,9 +88,13 @@ public class MovingBall : MonoBehaviour
         _myOctopus.NotifyShoot(_interceptShotBall);
         _interceptShotBall = !_interceptShotBall;
 
+        _myScorpion.NotifyShoot();
+
         ComputeStartVelocity();
         _ballWasShot = true;
         _blueTarget.canMove = false;
+
+        ComputeRotationAxis();
     }
 
     public void ResetPosition()
@@ -103,6 +126,43 @@ public class MovingBall : MonoBehaviour
     public Vector3 GetPositionInTime()
     {
         return _startShootPosition + (_startVelocity * _shootTime) + (0.5f * _gravityVector * Mathf.Pow(_shootTime, 2));
+    }
+
+
+
+    public Vector3 GetBlueTargetPosition()
+    {
+        return _blueTarget.Position;
+    }
+
+
+    private void ComputeRotationAxis()
+    {
+        Vector3 ballToGoalTargetDir = (_blueTarget.Position - Position).normalized;
+        Vector3 ballHitToCenterDir = _myScorpion.BallHitToCenterDir.normalized;
+
+        float dot = Vector3.Dot(ballToGoalTargetDir, ballHitToCenterDir);
+
+        //float angularVelocity = Mathf.Lerp(0f, 100f, 1f - dot);
+        float ballRadius = 0.5f;
+        _angularVelocity = _startVelocity.magnitude / ballRadius;
+
+        if (dot > 0.999f)
+        {
+            _rotationAxis = Vector3.zero;
+        }
+        else
+        {
+            _rotationAxis = Vector3.Cross(ballToGoalTargetDir, ballHitToCenterDir);
+        }
+
+    }
+
+    private void RotateBall()
+    {
+        transform.Rotate(_rotationAxis, (_angularVelocity * Mathf.Rad2Deg) * Time.deltaTime);
+
+        _uiController.SetAngularVelocityText(_angularVelocity * Mathf.Rad2Deg); // TODO fix
     }
 
 }
