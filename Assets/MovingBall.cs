@@ -56,7 +56,7 @@ public class MovingBall : MonoBehaviour
             float verticalInput = Input.GetAxis("Vertical");
 
             //update the position
-            transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, verticalInput * _movementSpeed * Time.deltaTime, 0);
+            //transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, verticalInput * _movementSpeed * Time.deltaTime, 0);
         }
         
 
@@ -71,6 +71,7 @@ public class MovingBall : MonoBehaviour
 
         ComputeStartVelocity();
         _ballWasShot = true;
+        _blueTarget.canMove = false;
     }
 
     public void ResetPosition()
@@ -80,6 +81,7 @@ public class MovingBall : MonoBehaviour
         _shootTime = 0f;
 
         _blueTarget.ResetPosition();
+        _blueTarget.canMove = true;
     }
 
     public void SetShootStrength(float strength)
