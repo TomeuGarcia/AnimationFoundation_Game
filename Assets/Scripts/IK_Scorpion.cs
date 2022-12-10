@@ -47,7 +47,7 @@ public class IK_Scorpion : MonoBehaviour
         _myController.InitLegs(legs,futureLegBases,legTargets);
         _myController.InitTail(tail);
 
-        tailTargetBallOffsetLength = _movingBall.ballRadius * 5;
+        tailTargetBallOffsetLength = _movingBall.ballRadius * 2;
         SetTailTargetPosition(Vector3.forward);
     }
 
@@ -109,6 +109,9 @@ public class IK_Scorpion : MonoBehaviour
 
     private void UpdateInputs()
     {
+        if(!_movingBall.BallWasShot)
+            UpdateBallTrajectory();
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _uiController.ResetStrengthSlider();
@@ -160,6 +163,13 @@ public class IK_Scorpion : MonoBehaviour
     private void SetTailTargetPosition(Vector3 offsetDirection)
     {
         tailTarget.localPosition = offsetDirection * tailTargetBallOffsetLength;
+    }
+
+
+    private void UpdateBallTrajectory()
+    {
+        _movingBall.SetShootStrength(_uiController.GetStrengthPer1());
+        _movingBall.ComputeStartVelocity();
     }
 
 }
