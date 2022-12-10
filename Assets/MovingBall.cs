@@ -51,6 +51,7 @@ public class MovingBall : MonoBehaviour
     // Movement Arrows
     [Header("Arrows")]
     private const int _numArrows = 20;
+    private bool _areArrowsVisible = true;
     [SerializeField] private GameObject _greyArrowPrefab;
     [SerializeField] private GameObject _arrowContainer;
 
@@ -80,11 +81,14 @@ public class MovingBall : MonoBehaviour
         _shootTime = 0f;
         _ballWasShot = false;
 
+        _areArrowsVisible = true;
+        _arrowContainer.SetActive(_areArrowsVisible);
     }
 
     // Update is called once per frame
     void Update()
     {
+        UpdateInputs();
 
         if (_ballWasShot)
         {
@@ -94,20 +98,36 @@ public class MovingBall : MonoBehaviour
         }
         else
         {
+            if (_areArrowsVisible) UpdateArrows();
+
             transform.rotation = Quaternion.identity;
 
             //get the Input from Horizontal axis
             float horizontalInput = Input.GetAxis("Horizontal");
             //get the Input from Vertical axis
             float verticalInput = Input.GetAxis("Vertical");
-            SetGreyArrowsTransforms();
+            
 
             //update the position
             //transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, verticalInput * _movementSpeed * Time.deltaTime, 0);
         }
-        
 
     }
+
+    private void UpdateInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            _areArrowsVisible = !_areArrowsVisible;
+            _arrowContainer.SetActive(_areArrowsVisible);
+        }
+    }
+
+    private void UpdateArrows()
+    {
+        SetGreyArrowsTransforms();
+    }
+
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -198,14 +218,15 @@ public class MovingBall : MonoBehaviour
     {
         float timeStep = _shootTimeDuration / _numArrows;
         float accumulatedTime = 0;
-        
+        Vector3 futurePosition = GetPositionInTime(accumulatedTime);
 
         for (int i = 0; i < _greyArrows.Length; i++)
         {
-            Vector3 futurePosition = GetPositionInTime(accumulatedTime + timeStep);
+            _greyArrows[i].position = futurePosition;
 
-            _greyArrows[i].position = GetPositionInTime(accumulatedTime);
-            _greyArrows[i].rotation = Quaternion.LookRotation((futurePosition - _greyArrows[i].position).normalized,Vector3.up);
+            futurePosition = GetPositionInTime(accumulatedTime + timeStep);
+            _greyArrows[i].rotation = Quaternion.LookRotation((futurePosition - _greyArrows[i].position).normalized, Vector3.up);
+
             accumulatedTime += timeStep;
         }
     }

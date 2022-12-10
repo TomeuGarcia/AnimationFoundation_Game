@@ -54,12 +54,15 @@ public class IK_Scorpion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(animPlaying)
-            animTime += Time.deltaTime;
-
         NotifyTailTarget();
         UpdateInputs();
 
+        if (!_movingBall.BallWasShot)
+        {
+            UpdateBallTrajectory();
+        }
+
+        if (animPlaying) animTime += Time.deltaTime;
 
         if (animTime < animDuration)
         {
@@ -108,10 +111,7 @@ public class IK_Scorpion : MonoBehaviour
 
 
     private void UpdateInputs()
-    {
-        if(!_movingBall.BallWasShot)
-            UpdateBallTrajectory();
-
+    {              
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _uiController.ResetStrengthSlider();
@@ -154,7 +154,9 @@ public class IK_Scorpion : MonoBehaviour
         Vector3 right = _movingBall.Right * (_isGoalTargetRightSide ? -1 : 1);
 
         float effectStrengthPer1 = _uiController.GetEffectStrengthPer1();
-        Vector3 offsetDirection = Vector3.Lerp(_movingBall.Forward, right, effectStrengthPer1);
+        
+        Vector3 offsetDirection = Vector3.Lerp(_movingBall.Forward, right, effectStrengthPer1).normalized;
+
         _ballHitToCenterDir = -offsetDirection;
 
         SetTailTargetPosition(offsetDirection);
