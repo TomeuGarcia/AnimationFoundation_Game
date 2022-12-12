@@ -47,7 +47,7 @@ public class IK_Scorpion : MonoBehaviour
         _myController.InitLegs(legs,futureLegBases,legTargets);
         _myController.InitTail(tail);
 
-        tailTargetBallOffsetLength = _movingBall.ballRadius * 2;
+        tailTargetBallOffsetLength = _movingBall._ballRadius * 2;
         SetTailTargetPosition(Vector3.forward);
     }
 

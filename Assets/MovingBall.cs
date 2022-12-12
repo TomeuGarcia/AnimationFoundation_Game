@@ -41,14 +41,21 @@ public class MovingBall : MonoBehaviour
 
     private float _shootStrengthPer1 = 0f;
 
-    float _angularVelocity;
+    //MAGNUS
+
+    Vector3 _instantLinearVelocity;
+    Vector3 _angularVelocity;
     Vector3 _rotationAxis;
-    private readonly float _maxRotationSpeed = 100f;
-    private readonly float _minRotationSpeed = 0f;
+    Vector3 _magnusForce;
 
-    public readonly float ballRadius = 0.0016f;
+    Vector3 _acceleration;
+    [SerializeField] private Transform _tailTarget;
 
-    // Movement Arrows
+    public readonly float _ballRadius = 0.0016f;
+
+
+
+    // ARROWS
     [Header("Arrows")]
     private const int _numArrows = 20;
     private bool _areArrowsVisible = true;
@@ -57,6 +64,8 @@ public class MovingBall : MonoBehaviour
 
     private Transform[] _greyArrows;
     private Transform[] _blueArrows;
+    [SerializeField] private Transform _greenArrow;
+
 
 
 
@@ -83,6 +92,7 @@ public class MovingBall : MonoBehaviour
 
         _areArrowsVisible = true;
         _arrowContainer.SetActive(_areArrowsVisible);
+        _greenArrow.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -92,15 +102,24 @@ public class MovingBall : MonoBehaviour
 
         if (_ballWasShot)
         {
-            transform.position = GetPositionInTime(_shootTime);
+            //transform.position = GetPositionInTime(_shootTime, _acceleration);
+            //_instantLinearVelocity = GetVelocityInTime(_shootTime, _acceleration);
+
+            transform.position = GetEulerPosition(transform.position, _instantLinearVelocity);
+            _instantLinearVelocity = GetEulerVelocity(_instantLinearVelocity, _acceleration);
+
+            ComputeAcceleration();
             _shootTime += Time.deltaTime;
             RotateBall();
+            SetGreenArrowsTransform();
         }
         else
         {
             if (_areArrowsVisible) UpdateArrows();
 
             transform.rotation = Quaternion.identity;
+
+            _acceleration = _gravityVector;
 
             //get the Input from Horizontal axis
             float horizontalInput = Input.GetAxis("Horizontal");
@@ -141,7 +160,9 @@ public class MovingBall : MonoBehaviour
         ComputeStartVelocity();
         _ballWasShot = true;
         _blueTarget.canMove = false;
+        _greenArrow.gameObject.SetActive(true);
 
+        _angularVelocity = ComputeAngularVelocity();
         ComputeRotationAxis();
     }
 
@@ -153,6 +174,7 @@ public class MovingBall : MonoBehaviour
 
         _blueTarget.ResetPosition();
         _blueTarget.canMove = true;
+        _greenArrow.gameObject.SetActive(false);
     }
 
     public void SetShootStrength(float strength)
@@ -171,11 +193,50 @@ public class MovingBall : MonoBehaviour
         _startVelocity /= _shootTimeDuration;
     }
 
-    public Vector3 GetPositionInTime(float time)
+    public void ComputeAcceleration()
     {
-        return _startShootPosition + (_startVelocity * time) + (0.5f * _gravityVector * Mathf.Pow(time, 2));
+        _magnusForce = ComputeMagnusForce();
+        // suma de la gravity + Magnus Force
+        _acceleration = _gravityVector + _magnusForce;
     }
 
+    private Vector3 ComputeAngularVelocity()
+    {
+        //We have created all these Vector3 to make it more llegible
+        Vector3 impactPoint = ((_tailTarget.position - Position).normalized * _ballRadius);
+        Vector3 angularMomentum = Vector3.Cross(impactPoint,_startVelocity);
+        Vector3 torque = angularMomentum;
+        Vector3 angularVelocity = torque * 100;
+        Debug.Log(angularVelocity);
+        return angularVelocity;
+    }
+
+    private Vector3 ComputeMagnusForce()
+    {
+        return Vector3.Cross(_angularVelocity,_instantLinearVelocity);
+    }
+
+
+
+    public Vector3 GetPositionInTime(float time, Vector3 acceleration)
+    {
+        return _startShootPosition + (_startVelocity * time) + (0.5f * acceleration * Mathf.Pow(time, 2));
+    }
+
+    public Vector3 GetVelocityInTime(float time, Vector3 acceleration)
+    {
+        return _startVelocity + acceleration * time;
+    }
+
+    public Vector3 GetEulerPosition(Vector3 position, Vector3 velocity)
+    {
+        return position + velocity * Time.deltaTime; 
+    }
+
+    public Vector3 GetEulerVelocity(Vector3 velocity, Vector3 acceleration)
+    {
+        return velocity + acceleration * Time.deltaTime;
+    }
 
 
     public Vector3 GetBlueTargetPosition()
@@ -191,10 +252,6 @@ public class MovingBall : MonoBehaviour
 
         float dot = Vector3.Dot(ballToGoalTargetDir, ballHitToCenterDir);
 
-        //float angularVelocity = Mathf.Lerp(0f, 100f, 1f - dot);
-        float ballRadius = 0.5f;
-        _angularVelocity = _startVelocity.magnitude / ballRadius;
-
         if (dot > 0.999f)
         {
             _rotationAxis = Vector3.zero;
@@ -208,9 +265,9 @@ public class MovingBall : MonoBehaviour
 
     private void RotateBall()
     {
-        transform.Rotate(_rotationAxis, (_angularVelocity * Mathf.Rad2Deg) * Time.deltaTime);
+        transform.Rotate(_rotationAxis, (_angularVelocity.magnitude * Mathf.Rad2Deg) * Time.deltaTime);
 
-        _uiController.SetAngularVelocityText(_angularVelocity * Mathf.Rad2Deg); // TODO fix
+        _uiController.SetAngularVelocityText(_angularVelocity.magnitude * Mathf.Rad2Deg); // TODO fix
     }
 
 
@@ -218,17 +275,25 @@ public class MovingBall : MonoBehaviour
     {
         float timeStep = _shootTimeDuration / _numArrows;
         float accumulatedTime = 0;
-        Vector3 futurePosition = GetPositionInTime(accumulatedTime);
+        Vector3 futurePosition = GetPositionInTime(accumulatedTime, _gravityVector);
 
         for (int i = 0; i < _greyArrows.Length; i++)
         {
             _greyArrows[i].position = futurePosition;
 
-            futurePosition = GetPositionInTime(accumulatedTime + timeStep);
+            futurePosition = GetPositionInTime(accumulatedTime + timeStep, _gravityVector);
             _greyArrows[i].rotation = Quaternion.LookRotation((futurePosition - _greyArrows[i].position).normalized, Vector3.up);
 
             accumulatedTime += timeStep;
         }
+    }
+
+    private void SetGreenArrowsTransform()
+    {
+
+        //--------------------------NEED TO CHANGE AND ADD MAGNUS FORCES------------------------
+
+        _greenArrow.rotation = Quaternion.LookRotation(_instantLinearVelocity.normalized, Vector3.up);
     }
 
 }
