@@ -55,16 +55,22 @@ public class MovingBall : MonoBehaviour
 
 
 
-    // ARROWS
+    // ARROWS & POINTS
     [Header("Arrows")]
     private const int _numArrows = 20;
+    private const int _numPoints = 40;
     private bool _areArrowsVisible = true;
     [SerializeField] private GameObject _greyArrowPrefab;
+    [SerializeField] private GameObject _bluePointsPrefab;
+
     [SerializeField] private GameObject _arrowContainer;
 
     private Transform[] _greyArrows;
-    private Transform[] _blueArrows;
+    private Transform[] _bluePoints;
+
+
     [SerializeField] private Transform _greenArrow;
+
 
 
 
@@ -81,6 +87,16 @@ public class MovingBall : MonoBehaviour
         {
             _greyArrows[i] = Instantiate(_greyArrowPrefab, _arrowContainer.transform).transform; 
         }
+
+        _bluePoints = new Transform[_numPoints];
+
+        for (int i = 0; i < _numPoints; i++)
+        {
+            _bluePoints[i] = Instantiate(_bluePointsPrefab, _arrowContainer.transform).transform;
+        }
+
+
+
     }
 
     // Start is called before the first frame update
@@ -91,8 +107,8 @@ public class MovingBall : MonoBehaviour
         _ballWasShot = false;
 
         _areArrowsVisible = true;
-        _arrowContainer.SetActive(_areArrowsVisible);
-        _greenArrow.gameObject.SetActive(false);
+
+        ResetBluePoints();
     }
 
     // Update is called once per frame
@@ -108,10 +124,18 @@ public class MovingBall : MonoBehaviour
             transform.position = GetEulerPosition(transform.position, _instantLinearVelocity);
             _instantLinearVelocity = GetEulerVelocity(_instantLinearVelocity, _acceleration);
 
-            ComputeAcceleration();
+            _acceleration = ComputeAcceleration(_angularVelocity, _instantLinearVelocity);
             _shootTime += Time.deltaTime;
             RotateBall();
             SetGreenArrowsTransform();
+
+            if (_shootTime <= _shootTimeDuration)
+            {
+                //SetBluePointsTransforms();
+                //_bluePoints.transform.position = Position;
+                SetBluePointsTransforms();
+            }
+
         }
         else
         {
@@ -164,6 +188,9 @@ public class MovingBall : MonoBehaviour
 
         _angularVelocity = ComputeAngularVelocity();
         ComputeRotationAxis();
+
+        _instantLinearVelocity = _startVelocity;
+        SetBluePointsTransforms();
     }
 
     public void ResetPosition()
@@ -175,7 +202,17 @@ public class MovingBall : MonoBehaviour
         _blueTarget.ResetPosition();
         _blueTarget.canMove = true;
         _greenArrow.gameObject.SetActive(false);
+
+        ResetBluePoints();
     }
+
+    private void ResetBluePoints()
+    {
+        _greenArrow.gameObject.SetActive(true);
+        _arrowContainer.SetActive(_areArrowsVisible);
+        _greenArrow.gameObject.SetActive(false);
+    }
+
 
     public void SetShootStrength(float strength)
     {
@@ -193,27 +230,26 @@ public class MovingBall : MonoBehaviour
         _startVelocity /= _shootTimeDuration;
     }
 
-    public void ComputeAcceleration()
+    public Vector3 ComputeAcceleration(Vector3 angularVelocity, Vector3 instantLinearVelocity)
     {
-        _magnusForce = ComputeMagnusForce();
-        // suma de la gravity + Magnus Force
-        _acceleration = _gravityVector + _magnusForce;
+        _magnusForce = ComputeMagnusForce(angularVelocity, instantLinearVelocity);
+        return _gravityVector + _magnusForce;
     }
 
     private Vector3 ComputeAngularVelocity()
     {
         //We have created all these Vector3 to make it more llegible
         Vector3 impactPoint = ((_tailTarget.position - Position).normalized * _ballRadius);
-        Vector3 angularMomentum = Vector3.Cross(impactPoint,_startVelocity);
+        Vector3 angularMomentum = Vector3.Cross(impactPoint,_startVelocity); //sliderValue * target - position
         Vector3 torque = angularMomentum;
-        Vector3 angularVelocity = torque * 100;
+        Vector3 angularVelocity = torque * Mathf.Lerp(0,10,_uiController.GetEffectStrengthPer1());
         Debug.Log(angularVelocity);
         return angularVelocity;
     }
 
-    private Vector3 ComputeMagnusForce()
+    private Vector3 ComputeMagnusForce(Vector3 angularVelocity, Vector3 instantLinearVelocity)
     {
-        return Vector3.Cross(_angularVelocity,_instantLinearVelocity);
+        return Vector3.Cross(angularVelocity, instantLinearVelocity);
     }
 
 
@@ -265,9 +301,12 @@ public class MovingBall : MonoBehaviour
 
     private void RotateBall()
     {
-        transform.Rotate(_rotationAxis, (_angularVelocity.magnitude * Mathf.Rad2Deg) * Time.deltaTime);
+        float angleRotationPerSecond = _angularVelocity.magnitude * Mathf.Rad2Deg;
 
-        _uiController.SetAngularVelocityText(_angularVelocity.magnitude * Mathf.Rad2Deg); // TODO fix
+        transform.Rotate(_angularVelocity.normalized, angleRotationPerSecond * Time.deltaTime);
+        Debug.Log(transform.rotation);
+
+        _uiController.SetAngularVelocityText(angleRotationPerSecond); // TODO fix
     }
 
 
@@ -287,6 +326,30 @@ public class MovingBall : MonoBehaviour
             accumulatedTime += timeStep;
         }
     }
+
+    private void SetBluePointsTransforms()
+    {
+        float timeStep = _shootTimeDuration / _numArrows;
+        Vector3 position = _startPosition;
+        Vector3 velocity = _startVelocity;
+
+        float accumulatedTime = 0;
+        Vector3 futurePosition = GetPositionInTime(accumulatedTime,ComputeAcceleration(_angularVelocity,_startVelocity));
+
+
+        for (int i = 0; i < _numPoints ; ++i)
+        {
+            _bluePoints[i].position = futurePosition;
+
+            //futurePosition = GetPositionInTime(accumulatedTime + timeStep, ComputeAcceleration(_angularVelocity,GetVelocityInTime(accumulatedTime + timeStep,) ));
+
+
+            //_bluePoints[i].position = position = GetEulerPosition(position,velocity);
+
+            // velocity = GetEulerVelocity(velocity, ComputeAcceleration(_angularVelocity,velocity));
+        }
+    }
+
 
     private void SetGreenArrowsTransform()
     {
