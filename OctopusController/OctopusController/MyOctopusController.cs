@@ -208,12 +208,36 @@ namespace OctopusController
                             if (_sin < 0.0f)
                                 _theta = -_theta;
 
+                            if(_theta > 180.0f)
+                            {
+                                _theta = 180.0f - _theta;
+                            }
+
 
                             // obtain an angle value between -pi and pi, and then convert to degrees
                             _theta = _theta * Mathf.Rad2Deg;
 
                             // rotate the ith joint along the axis by theta degrees in the world space.
                             tentacleBones[i].transform.rotation = Quaternion.AngleAxis(_theta, axis) * tentacleBones[i].transform.rotation;
+
+                            Quaternion swingLocalRotation = GetSwing(tentacleBones[i].transform.localRotation, Vector3.up);
+
+                            Vector3 clampedSwing = swingLocalRotation.eulerAngles;
+                            if(clampedSwing.x > 180.0f)
+                            {
+                                clampedSwing.x = 180.0f - clampedSwing.x;
+                            }
+                            clampedSwing.x = Mathf.Clamp(clampedSwing.x, -20.0f, 20.0f);
+
+                            if (clampedSwing.z > 180.0f)
+                            {
+                                clampedSwing.z = 180.0f - clampedSwing.z;
+                            }
+                            clampedSwing.z = Mathf.Clamp(clampedSwing.z, -20.0f, 20.0f);
+
+                            Quaternion clampedRotation = Quaternion.Euler(clampedSwing.x,clampedSwing.y,clampedSwing.z);
+
+                            tentacleBones[i].transform.localRotation = clampedRotation;
 
                             ++_tries[tentacleI];
                         }
@@ -248,6 +272,16 @@ namespace OctopusController
 
 
 
+        }
+
+        private Quaternion GetTwist(Quaternion rotation , Vector3 twistAxis)
+        {
+            return new Quaternion(rotation.x * twistAxis.x, rotation.y * twistAxis.y, rotation.z * twistAxis.z, rotation.w);
+        }
+
+        private Quaternion GetSwing(Quaternion rotation, Vector3 twistAxis)
+        {
+            return rotation * Quaternion.Inverse(GetTwist(rotation, twistAxis));
         }
 
 
