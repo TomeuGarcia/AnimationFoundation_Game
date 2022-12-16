@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_Controller : MonoBehaviour
 {
@@ -10,14 +11,21 @@ public class UI_Controller : MonoBehaviour
     private float _strengthSliderSpeed = 2f;
     private int _sliderDirection = 1;
 
+    [Header("Effect Strength Slider")]
+    [SerializeField] private Slider _effectStrengthSlider;
+    private float _effectStrengthSliderSpeed = 2f;
 
-    // Start is called before the first frame update
+    [Header("Angular Velocity Text")]
+    [SerializeField] private TextMeshPro angularVelocityText;
+
     void Start()
     {
         _strengthSliderSpeed *= _strengthSlider.maxValue;
+
+        _effectStrengthSliderSpeed *= _effectStrengthSlider.maxValue;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
     }
@@ -41,5 +49,21 @@ public class UI_Controller : MonoBehaviour
         return _strengthSlider.value / _strengthSlider.maxValue;
     }
 
+
+    public void UpdateEffectStrengthSlider(int sliderDirection)
+    {
+        float newValue = _effectStrengthSlider.value + (Time.deltaTime * _effectStrengthSliderSpeed * sliderDirection);
+        _effectStrengthSlider.value = Mathf.Clamp(newValue, 0f, _effectStrengthSlider.maxValue);
+    }
+
+    public float GetEffectStrengthPer1()
+    {
+        return _effectStrengthSlider.value / _effectStrengthSlider.maxValue;
+    }
+
+    public void SetAngularVelocityText(float degreesPerSecond)
+    {
+        angularVelocityText.text = degreesPerSecond.ToString();
+    }
 
 }
