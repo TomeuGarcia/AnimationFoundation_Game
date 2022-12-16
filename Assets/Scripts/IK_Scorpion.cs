@@ -80,7 +80,7 @@ public class IK_Scorpion : MonoBehaviour
         if (_reset)
         {
             _myController.ResetLegs();
-            _movingBall.ResetPosition();
+            _movingBall.ResetStateToStart();
             _reset = false; // toggle reset off
         }
 
