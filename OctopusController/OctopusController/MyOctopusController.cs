@@ -219,25 +219,7 @@ namespace OctopusController
 
                             // rotate the ith joint along the axis by theta degrees in the world space.
                             tentacleBones[i].transform.rotation = Quaternion.AngleAxis(_theta, axis) * tentacleBones[i].transform.rotation;
-
-                            Quaternion swingLocalRotation = GetSwing(tentacleBones[i].transform.localRotation, Vector3.up);
-
-                            Vector3 clampedSwing = swingLocalRotation.eulerAngles;
-                            if(clampedSwing.x > 180.0f)
-                            {
-                                clampedSwing.x = 180.0f - clampedSwing.x;
-                            }
-                            clampedSwing.x = Mathf.Clamp(clampedSwing.x, -20.0f, 20.0f);
-
-                            if (clampedSwing.z > 180.0f)
-                            {
-                                clampedSwing.z = 180.0f - clampedSwing.z;
-                            }
-                            clampedSwing.z = Mathf.Clamp(clampedSwing.z, -20.0f, 20.0f);
-
-                            Quaternion clampedRotation = Quaternion.Euler(clampedSwing.x,clampedSwing.y,clampedSwing.z);
-
-                            tentacleBones[i].transform.localRotation = clampedRotation;
+                            ClampBoneRotation(tentacleBones[i].transform);
 
                             ++_tries[tentacleI];
                         }
@@ -272,6 +254,33 @@ namespace OctopusController
 
 
 
+        }
+
+        private void ClampBoneRotation(Transform bone)
+        {
+            Quaternion swingLocalRotation = GetSwing(bone.transform.localRotation, Vector3.up);
+
+            float minAngleX = -20f;
+            float maxAngleX = 20f;
+            float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan(swingLocalRotation.x);
+            angleX = Mathf.Clamp(angleX, minAngleX, maxAngleX);
+            angleX = 0.5f * Mathf.Deg2Rad * Mathf.Tan(angleX);
+
+            float minAngleY = 0f;
+            float maxAngleY = 0f;
+            float angleY = 2.0f * Mathf.Rad2Deg * Mathf.Atan(swingLocalRotation.y);
+            angleY = Mathf.Clamp(angleY, minAngleY, maxAngleY);
+            angleY = 0.5f * Mathf.Deg2Rad * Mathf.Tan(angleY);
+
+            float minAngleZ = -5f;
+            float maxAngleZ = 5f;
+            float angleZ = 2.0f * Mathf.Rad2Deg * Mathf.Atan(swingLocalRotation.z);
+            angleZ = Mathf.Clamp(angleZ, minAngleZ, maxAngleZ);
+            angleZ = 0.5f * Mathf.Deg2Rad * Mathf.Tan(angleZ);
+
+            Quaternion clampedRotation = new Quaternion(angleX, angleY, angleZ, 1.0f);
+
+            bone.transform.localRotation = clampedRotation;
         }
 
         private Quaternion GetTwist(Quaternion rotation , Vector3 twistAxis)
