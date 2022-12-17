@@ -260,27 +260,9 @@ namespace OctopusController
         {
             Quaternion swingLocalRotation = GetSwing(bone.transform.localRotation, Vector3.up);
 
-            float minAngleX = -20f;
-            float maxAngleX = 20f;
-            float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan(swingLocalRotation.x);
-            angleX = Mathf.Clamp(angleX, minAngleX, maxAngleX);
-            angleX = 0.5f * Mathf.Deg2Rad * Mathf.Tan(angleX);
+            Quaternion clampedLocalRotation = GetClampedQuaternion(swingLocalRotation, new Vector3(-20, 0, -5), new Vector3(20, 0, 5));
 
-            float minAngleY = 0f;
-            float maxAngleY = 0f;
-            float angleY = 2.0f * Mathf.Rad2Deg * Mathf.Atan(swingLocalRotation.y);
-            angleY = Mathf.Clamp(angleY, minAngleY, maxAngleY);
-            angleY = 0.5f * Mathf.Deg2Rad * Mathf.Tan(angleY);
-
-            float minAngleZ = -5f;
-            float maxAngleZ = 5f;
-            float angleZ = 2.0f * Mathf.Rad2Deg * Mathf.Atan(swingLocalRotation.z);
-            angleZ = Mathf.Clamp(angleZ, minAngleZ, maxAngleZ);
-            angleZ = 0.5f * Mathf.Deg2Rad * Mathf.Tan(angleZ);
-
-            Quaternion clampedRotation = new Quaternion(angleX, angleY, angleZ, 1.0f);
-
-            bone.transform.localRotation = clampedRotation;
+            bone.transform.localRotation = clampedLocalRotation;
         }
 
         private Quaternion GetTwist(Quaternion rotation , Vector3 twistAxis)
@@ -291,6 +273,28 @@ namespace OctopusController
         private Quaternion GetSwing(Quaternion rotation, Vector3 twistAxis)
         {
             return rotation * Quaternion.Inverse(GetTwist(rotation, twistAxis));
+        }
+
+        private Quaternion GetClampedQuaternion(Quaternion q, Vector3 minBounds, Vector3 maxBounds)
+        {
+            q.x /= q.w;
+            q.y /= q.w;
+            q.z /= q.w;
+            q.w = 1.0f;
+
+            float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan(q.x);
+            angleX = Mathf.Clamp(angleX, minBounds.x, maxBounds.x);
+            q.x = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleX);
+
+            float angleY = 2.0f * Mathf.Rad2Deg * Mathf.Atan(q.y);
+            angleY = Mathf.Clamp(angleY, minBounds.y, maxBounds.y);
+            q.y = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleY);
+
+            float angleZ = 2.0f * Mathf.Rad2Deg * Mathf.Atan(q.z);
+            angleZ = Mathf.Clamp(angleZ, minBounds.z, maxBounds.z);
+            q.z = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleZ);
+            
+            return q;
         }
 
 
