@@ -49,7 +49,12 @@ namespace OctopusController
 
         readonly float _targetDuration = 3f;
         float _targetTimer = 0f;
+        readonly float _moveToTargetDuration = 1.5f;
+        float _moveToTargetTimer = 0f;
 
+
+        private Vector3 _clampedAnglesMin = new Vector3(-20, 0, -3);
+        private Vector3 _clampedAnglesMax = new Vector3(20, 0, 3);
 
 
         #region public methods
@@ -98,6 +103,7 @@ namespace OctopusController
             _tentacleToTargetIndex = -1;
             _interceptShotBall = false;
             _targetTimer = 0f;
+            _moveToTargetTimer = 0f;
         }
 
 
@@ -126,6 +132,7 @@ namespace OctopusController
             if (interceptShotBall)
             {
                 _targetTimer = 0f;
+                //_moveToTargetTimer = 0f;
             }
         }
 
@@ -139,11 +146,23 @@ namespace OctopusController
             {
                 if (_targetTimer < _targetDuration)
                 {
-                    _targetTimer += Time.deltaTime;
+                    _targetTimer += Time.deltaTime;                    
                 }
-                else
+
+                if (_targetTimer < _moveToTargetDuration)
                 {
-                    _tentacleToTargetIndex = -1;
+                    _moveToTargetTimer += Time.deltaTime;
+                    _moveToTargetTimer = Mathf.Clamp(_moveToTargetTimer, 0f, _moveToTargetDuration);
+                }
+                else if (_targetTimer > _targetDuration)
+                {
+                    _moveToTargetTimer -= Time.deltaTime;
+                    _moveToTargetTimer = Mathf.Clamp(_moveToTargetTimer, 0f, _moveToTargetDuration);
+
+                    if (_moveToTargetTimer < 0.0001f)
+                    {
+                        _tentacleToTargetIndex = -1;
+                    }
                 }
 
             }
@@ -160,12 +179,21 @@ namespace OctopusController
 
         void update_ccd()
         {
-
             for (int tentacleI = 0; tentacleI < _tentacles.Length; ++tentacleI)
             {
                 Transform[] tentacleBones = _tentacles[tentacleI].Bones;
 
-                Transform tentacleTarget = (_interceptShotBall && tentacleI == _tentacleToTargetIndex) ? _target : _randomTargets[tentacleI];
+                Vector3 tentacleTargetPos;
+                if (_interceptShotBall && tentacleI == _tentacleToTargetIndex)
+                {
+                    tentacleTargetPos = Vector3.Lerp(_randomTargets[tentacleI].position, _target.position, _moveToTargetTimer / _moveToTargetDuration);
+                    Debug.Log("LERPING");
+                }
+                else
+                {
+                    tentacleTargetPos = _randomTargets[tentacleI].position;
+                    Debug.Log("NOT lerping");
+                }
 
                 _done = false;
                 if (!_done)
@@ -179,7 +207,7 @@ namespace OctopusController
                             Vector3 r1 = (tentacleBones[tentacleBones.Length - 1].transform.position - tentacleBones[i].transform.position).normalized;
 
                             // The vector from the ith joint to the target
-                            Vector3 r2 = (tentacleTarget.position - tentacleBones[i].transform.position).normalized;
+                            Vector3 r2 = (tentacleTargetPos - tentacleBones[i].transform.position).normalized;
 
                             // to avoid dividing by tiny numbers
                             if (r1.magnitude * r2.magnitude <= 0.001f)
@@ -226,7 +254,7 @@ namespace OctopusController
                     }
 
                     // find the difference in the positions of the end effector and the target
-                    Vector3 targetToEffector = tentacleBones[tentacleBones.Length - 1].transform.position - tentacleTarget.position;
+                    Vector3 targetToEffector = tentacleBones[tentacleBones.Length - 1].transform.position - tentacleTargetPos;
 
                     // if target is within reach (within epsilon) then the process is done
                     if (targetToEffector.magnitude < _epsilon)
@@ -240,10 +268,10 @@ namespace OctopusController
                     }
 
                     // the target has moved, reset tries to 0 and change tpos
-                    if (tentacleTarget.position != tpos[tentacleI])
+                    if (tentacleTargetPos != tpos[tentacleI])
                     {
                         _tries[tentacleI] = 0;
-                        tpos[tentacleI] = tentacleTarget.position;
+                        tpos[tentacleI] = tentacleTargetPos;
                     }
 
                 }
@@ -260,7 +288,7 @@ namespace OctopusController
         {
             Quaternion swingLocalRotation = GetSwing(bone.transform.localRotation, Vector3.up);
 
-            Quaternion clampedLocalRotation = GetClampedQuaternion(swingLocalRotation, new Vector3(-20, 0, -5), new Vector3(20, 0, 5));
+            Quaternion clampedLocalRotation = GetClampedQuaternion(swingLocalRotation, _clampedAnglesMin, _clampedAnglesMax);
 
             bone.transform.localRotation = clampedLocalRotation;
         }

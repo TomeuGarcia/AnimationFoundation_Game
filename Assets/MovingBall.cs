@@ -258,7 +258,7 @@ public class MovingBall : MonoBehaviour
         Vector3 angularMomentum = Vector3.Cross(impactPoint,_startVelocity); //sliderValue * target - position
         Vector3 torque = angularMomentum;
         Vector3 angularVelocity = torque * Mathf.Lerp(0,10,_uiController.GetEffectStrengthPer1());
-        Debug.Log(angularVelocity);
+
         return angularVelocity;
     }
 
@@ -321,7 +321,6 @@ public class MovingBall : MonoBehaviour
         float angleRotationPerSecond = _angularVelocity.magnitude * Mathf.Rad2Deg;
 
         transform.Rotate(_angularVelocity.normalized, angleRotationPerSecond * Time.deltaTime);
-        Debug.Log(transform.rotation.eulerAngles);
 
         if (!_isRotatingClockwise) angleRotationPerSecond *= -1;
         
@@ -381,12 +380,14 @@ public class MovingBall : MonoBehaviour
 
     private void SetMagnusArrowTransform()
     {
-        _redMagnusArrow.rotation = Quaternion.LookRotation(_magnusForce.normalized, Vector3.up);
+        if (_magnusForce.sqrMagnitude > 0.01f)
+            _redMagnusArrow.rotation = Quaternion.LookRotation(_magnusForce.normalized, Vector3.up);
     }
 
     private void SetStartMagnusArrowTransform()
     {
-        _greyStartMagnusArrow.rotation = Quaternion.LookRotation(_magnusForce.normalized, Vector3.up);
+        if (_magnusForce.sqrMagnitude > 0.01f)
+            _greyStartMagnusArrow.rotation = Quaternion.LookRotation(_magnusForce.normalized, Vector3.up);
     }
 
 
