@@ -1,5 +1,9 @@
 # AnimationFoundation_Game
 
+NOTICE
+======
+dll code found in the directory: /OctopusController
+
 
 EXERCISE 1
 ==========
@@ -35,8 +39,10 @@ In MovingBall.cs:
 UARM Formula:				startVelocity Formula:
 Xf = Xo + (Vo*t) + (1/2*a*t^2)  ----->  Vo = (Xf - Xo - (1/2*a*t^2)) / t
 
-- To compute the instantaneous position we use the UARM formula and increment t by deltaTime
-  each frame
+- To compute the instantaneous position and velocity we use the Euler solver formula since in 
+exercise 2 we'll need to apply a Magnus Force (changing acceleration).
+Xn+1 = Xn + Vn * dt		Vn+1 = Vn + An * dt
+
 
 
 
@@ -68,5 +74,21 @@ Ex2.5
 ...
 
 Ex2.6
+===== 
+...
+
+
+
+EXERCISE 5
+==========
+Ex5.1
+=====
+...
+
+Ex5.2
+===== 
+...
+
+Ex5.3
 ===== 
 ...

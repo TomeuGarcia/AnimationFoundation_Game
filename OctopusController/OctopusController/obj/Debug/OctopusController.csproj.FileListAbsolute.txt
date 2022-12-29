@@ -68,3 +68,10 @@ E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\Octopu
 E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
 E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.dll
 E:\Users\Tomeu Garcia Pintó\Documents\GitKraken\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.pdb
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\bin\Debug\OctopusController.dll
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\bin\Debug\OctopusController.pdb
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.AssemblyReference.cache
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CoreCompileInputs.cache
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.csproj.CopyComplete
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.dll
+D:\treballs enti\3r curs\1r semestre\Fonaments de Modelatge i Animació de Personatges\AnimationFoundation_Game\OctopusController\OctopusController\obj\Debug\OctopusController.pdb
