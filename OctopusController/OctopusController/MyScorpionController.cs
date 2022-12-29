@@ -73,6 +73,8 @@ namespace OctopusController
         bool _startedWalking = false;
         bool _updateTail = true;
 
+        float _legMoveHeight = 0.4f;
+
         private List<Vector3[]> _originalLegsPositions;
         private List<Quaternion[]> _originalLegsRotations;
 
@@ -241,8 +243,7 @@ namespace OctopusController
                 {
                     _legsMoveBaseTimer[legI] += Time.deltaTime;
                     float t = _legsMoveBaseTimer[legI] / _legsMoveDuration;
-
-                    _legs[legI].Bones[0].position = Vector3.Lerp(_legsBaseOrigin[legI], _legsBaseDestination[legI], t);
+                    _legs[legI].Bones[0].position = ComputeBaseBonePosition(legI, t);
 
                     if (t > 0.999f)
                     {
@@ -476,5 +477,18 @@ namespace OctopusController
         }
 
 
+
+        private Vector3 ComputeBaseBonePosition(int legI, float t)
+        {
+            Vector3 bonePosition = Vector3.Lerp(_legsBaseOrigin[legI], _legsBaseDestination[legI], t);
+            
+            // Add Y displacement
+            bonePosition += Mathf.Sin(t * Mathf.PI) * _legMoveHeight * Vector3.up;
+
+            return bonePosition;
+        }
+
     }
+
+
 }

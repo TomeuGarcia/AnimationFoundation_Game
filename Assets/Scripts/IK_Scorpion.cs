@@ -40,6 +40,15 @@ public class IK_Scorpion : MonoBehaviour
     [Header("UI Controller")]
     [SerializeField] private UI_Controller _uiController;
 
+    [Header("Body Animation")]
+    [SerializeField] private Transform mainBody;
+    private Vector3 _bodyToLegsOffset;
+
+    readonly float _futureLegBaseOriginDisplacement = 2f;
+    readonly float _futureLegBaseProbeDist = 5f;
+    readonly Vector3 _futureLegBaseProbeDirection = Vector3.down;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +58,9 @@ public class IK_Scorpion : MonoBehaviour
 
         tailTargetBallOffsetLength = _movingBall._ballRadius * 2;
         SetTailTargetPosition(Vector3.forward);
+
+
+        _bodyToLegsOffset = (mainBody.position.y - futureLegBases[0].position.y) * Vector3.up;
     }
 
     // Update is called once per frame
@@ -69,6 +81,8 @@ public class IK_Scorpion : MonoBehaviour
             Body.position = Vector3.Lerp(StartPos.position, EndPos.position, animTime / animDuration);
             
             ComputeTailTargetPosition();
+
+            UpdateLegsAndBody();
         }
         else if (animTime >= animDuration && animPlaying)
         {
@@ -173,5 +187,33 @@ public class IK_Scorpion : MonoBehaviour
         _movingBall.SetShootStrength(_uiController.GetStrengthPer1());
         _movingBall.ComputeStartVelocity();
     }
+
+
+
+    private void UpdateLegsAndBody()
+    {
+        Vector3 bodyLegsAvgPos = Vector3.zero;
+
+        for (int legI = 0; legI < futureLegBases.Length; ++legI)
+        {
+            RaycastHit hit;
+
+            Vector3 hitOrigin = futureLegBases[legI].position + (-_futureLegBaseProbeDirection * _futureLegBaseOriginDisplacement);
+
+            Debug.DrawLine(hitOrigin, hitOrigin + (_futureLegBaseProbeDirection * _futureLegBaseProbeDist), Color.magenta, Time.deltaTime);
+
+            if (Physics.Raycast(hitOrigin, _futureLegBaseProbeDirection, out hit, _futureLegBaseProbeDist))
+            {
+                futureLegBases[legI].position = hit.point;
+            }
+
+            bodyLegsAvgPos += futureLegBases[legI].position;
+        }
+
+
+        bodyLegsAvgPos /= (float)futureLegBases.Length;
+        mainBody.position = bodyLegsAvgPos + _bodyToLegsOffset;
+    }
+
 
 }
