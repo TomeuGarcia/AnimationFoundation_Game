@@ -225,9 +225,6 @@ namespace OctopusController
             {
                 float futureBaseDistance = Vector3.Distance(_legs[legI].Bones[0].position, legFutureBases[legI].position);
 
-                
-
-
                 if (futureBaseDistance > _legFarAwayThreashold && !_legIsMoving[legI])
                 {
                     // start reposition leg's base

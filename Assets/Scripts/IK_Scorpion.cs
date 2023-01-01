@@ -24,9 +24,6 @@ public class IK_Scorpion : MonoBehaviour
 
     private Vector3 _moveOffset = Vector3.zero;
 
-    [SerializeField] private Transform[] _fakeEE;
-    [SerializeField] private Transform[] _realEE;
-
     [Header("Tail")]
     public Transform tailTarget;
     public Transform tail;
@@ -41,6 +38,7 @@ public class IK_Scorpion : MonoBehaviour
     public Transform[] legs;
     public Transform[] legTargets;
     public Transform[] futureLegBases;
+    public Transform _futureLegBasesHolder;
 
     private bool _reset = false;
 
@@ -80,7 +78,6 @@ public class IK_Scorpion : MonoBehaviour
     {
         NotifyTailTarget();
         UpdateInputs();
-        UpdateLegsEE();
 
         if (!_movingBall.BallWasShot)
         {
@@ -132,6 +129,7 @@ public class IK_Scorpion : MonoBehaviour
             _reset = false; // toggle reset off
         }
 
+        _futureLegBasesHolder.rotation = Quaternion.AngleAxis(mainBody.rotation.eulerAngles.y, Vector3.up);
         _myController.UpdateIK();        
     }
     
@@ -249,18 +247,19 @@ public class IK_Scorpion : MonoBehaviour
 
 
             if(legI % 2 == 0)
-                rightLegsAvgPos += futureLegBases[legI].position;
-            
+                rightLegsAvgPos += futureLegBases[legI].position;           
             else
                 leftLegsAvgPos += futureLegBases[legI].position;
         }
 
 
-        bodyLegsAvgPos /= (float)futureLegBases.Length;
+        float numLegs = (float)futureLegBases.Length;
+        bodyLegsAvgPos /= numLegs;
         mainBody.position = bodyLegsAvgPos + _bodyToLegsOffset;
 
-        rightLegsAvgPos /= 3f;
-        leftLegsAvgPos /= 3f;
+        float numLegsEachSide = numLegs / 2f;
+        rightLegsAvgPos /= numLegsEachSide;
+        leftLegsAvgPos /= numLegsEachSide;
 
         if(_currentForward.sqrMagnitude > 0.0001f) { 
 
@@ -281,15 +280,6 @@ public class IK_Scorpion : MonoBehaviour
         {
             mainBody.rotation = Quaternion.RotateTowards(mainBody.rotation, _desiredLookRotation, 300f * Time.deltaTime);
         }
-    }
-
-    private void UpdateLegsEE()
-    {
-        for(int i = 0; i < _fakeEE.Length; ++i)
-        {
-            _realEE[i].position = _fakeEE[i].position;
-        }
-
     }
 
 }
