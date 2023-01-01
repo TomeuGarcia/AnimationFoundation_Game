@@ -17,6 +17,16 @@ public class IK_Scorpion : MonoBehaviour
     public Transform StartPos;
     public Transform EndPos;
 
+    private Quaternion _desiredLookRotation;
+
+    private Vector3 _lastBodyPosition = Vector3.zero;
+    private Vector3 _currentForward = Vector3.zero;
+
+    private Vector3 _moveOffset = Vector3.zero;
+
+    [SerializeField] private Transform[] _fakeEE;
+    [SerializeField] private Transform[] _realEE;
+
     [Header("Tail")]
     public Transform tailTarget;
     public Transform tail;
@@ -61,6 +71,8 @@ public class IK_Scorpion : MonoBehaviour
 
 
         _bodyToLegsOffset = (mainBody.position.y - futureLegBases[0].position.y) * Vector3.up;
+
+        _lastBodyPosition = mainBody.position;
     }
 
     // Update is called once per frame
@@ -68,6 +80,7 @@ public class IK_Scorpion : MonoBehaviour
     {
         NotifyTailTarget();
         UpdateInputs();
+        UpdateLegsEE();
 
         if (!_movingBall.BallWasShot)
         {
@@ -78,15 +91,32 @@ public class IK_Scorpion : MonoBehaviour
 
         if (animTime < animDuration)
         {
-            Body.position = Vector3.Lerp(StartPos.position, EndPos.position, animTime / animDuration);
+            float t = animTime / animDuration;
+            float sint = Mathf.Clamp01(t * 1.2f) * 2f * Mathf.PI;
+
+            _moveOffset.x = Mathf.Sin(sint) * 3f;
+
+            _currentForward = mainBody.position - _lastBodyPosition;
+
+            if(_currentForward.sqrMagnitude > 0.0001f)
+            {
+                _currentForward = _currentForward.normalized;
+                Debug.DrawLine(mainBody.position, mainBody.position + _currentForward * 2);
+            }
+
+            _lastBodyPosition = mainBody.position;
+
+            Body.position = Vector3.Lerp(StartPos.position, EndPos.position, t) + _moveOffset;
             
             ComputeTailTargetPosition();
 
             UpdateLegsAndBody();
+
+            RotateBody();
         }
         else if (animTime >= animDuration && animPlaying)
         {
-            Body.position = EndPos.position;
+            Body.position = EndPos.position + _moveOffset;
             animPlaying = false;
         }
 
@@ -95,6 +125,10 @@ public class IK_Scorpion : MonoBehaviour
         {
             _myController.ResetLegs();
             _movingBall.ResetStateToStart();
+
+            _moveOffset = Vector3.zero;
+            _lastBodyPosition = mainBody.position;
+
             _reset = false; // toggle reset off
         }
 
@@ -194,6 +228,10 @@ public class IK_Scorpion : MonoBehaviour
     {
         Vector3 bodyLegsAvgPos = Vector3.zero;
 
+        Vector3 leftLegsAvgPos = Vector3.zero;
+        Vector3 rightLegsAvgPos = Vector3.zero;
+
+
         for (int legI = 0; legI < futureLegBases.Length; ++legI)
         {
             RaycastHit hit;
@@ -208,12 +246,50 @@ public class IK_Scorpion : MonoBehaviour
             }
 
             bodyLegsAvgPos += futureLegBases[legI].position;
+
+
+            if(legI % 2 == 0)
+                rightLegsAvgPos += futureLegBases[legI].position;
+            
+            else
+                leftLegsAvgPos += futureLegBases[legI].position;
         }
 
 
         bodyLegsAvgPos /= (float)futureLegBases.Length;
         mainBody.position = bodyLegsAvgPos + _bodyToLegsOffset;
+
+        rightLegsAvgPos /= 3f;
+        leftLegsAvgPos /= 3f;
+
+        if(_currentForward.sqrMagnitude > 0.0001f) { 
+
+            Vector3 newRightBodyAxis = (rightLegsAvgPos - leftLegsAvgPos).normalized;
+
+            Vector3 newUpBodyAxis = Vector3.Cross(_currentForward, newRightBodyAxis).normalized;
+            Vector3 newForwardAxis = Vector3.Cross(newUpBodyAxis, newRightBodyAxis).normalized;
+
+            Debug.DrawLine(mainBody.position, mainBody.position - newForwardAxis * 2f);
+
+            _desiredLookRotation = Quaternion.LookRotation(-_currentForward, newUpBodyAxis);
+        }
     }
 
+    private void RotateBody()
+    {
+        if (_currentForward.sqrMagnitude > 0.0001f)
+        {
+            mainBody.rotation = Quaternion.RotateTowards(mainBody.rotation, _desiredLookRotation, 300f * Time.deltaTime);
+        }
+    }
+
+    private void UpdateLegsEE()
+    {
+        for(int i = 0; i < _fakeEE.Length; ++i)
+        {
+            _realEE[i].position = _fakeEE[i].position;
+        }
+
+    }
 
 }
