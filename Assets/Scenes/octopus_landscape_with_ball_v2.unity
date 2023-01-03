@@ -1129,6 +1129,8 @@ MonoBehaviour:
   _movingBall: {fileID: 1938829485}
   _uiController: {fileID: 1664738597}
   mainBody: {fileID: 633062545}
+  _zigZagWidth: 3
+  _numZigZags: 2
 --- !u!4 &290393798 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 412129502946005402, guid: c9ae8800298c5904a805978e2ff06201,

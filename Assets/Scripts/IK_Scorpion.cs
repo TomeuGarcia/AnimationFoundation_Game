@@ -51,6 +51,9 @@ public class IK_Scorpion : MonoBehaviour
     [Header("Body Animation")]
     [SerializeField] private Transform mainBody;
     private Vector3 _bodyToLegsOffset;
+    [SerializeField, Min(0f)] private float _zigZagWidth = 2f;
+    [SerializeField, Min(0)] private int _numZigZags = 2;
+    private float _numZigZagSines;
 
     readonly float _futureLegBaseOriginDisplacement = 2f;
     readonly float _futureLegBaseProbeDist = 5f;
@@ -71,6 +74,8 @@ public class IK_Scorpion : MonoBehaviour
         _bodyToLegsOffset = (mainBody.position.y - futureLegBases[0].position.y) * Vector3.up;
 
         _lastBodyPosition = mainBody.position;
+
+        _numZigZagSines = (float)_numZigZags / 2f;
     }
 
     // Update is called once per frame
@@ -88,27 +93,9 @@ public class IK_Scorpion : MonoBehaviour
 
         if (animTime < animDuration)
         {
-            float t = animTime / animDuration;
-            float sint = Mathf.Clamp01(t * 1.2f) * 2f * Mathf.PI;
-
-            _moveOffset.x = Mathf.Sin(sint) * 3f;
-
-            _currentForward = mainBody.position - _lastBodyPosition;
-
-            if(_currentForward.sqrMagnitude > 0.0001f)
-            {
-                _currentForward = _currentForward.normalized;
-                Debug.DrawLine(mainBody.position, mainBody.position + _currentForward * 2);
-            }
-
-            _lastBodyPosition = mainBody.position;
-
-            Body.position = Vector3.Lerp(StartPos.position, EndPos.position, t) + _moveOffset;
-            
+            MoveBody();            
             ComputeTailTargetPosition();
-
             UpdateLegsAndBody();
-
             RotateBody();
         }
         else if (animTime >= animDuration && animPlaying)
@@ -182,6 +169,25 @@ public class IK_Scorpion : MonoBehaviour
         {
             _uiController.UpdateEffectStrengthSlider(1);
         }
+    }
+
+    private void MoveBody()
+    {
+        float t = animTime / animDuration;
+        float sint = Mathf.Clamp01(t * 1.2f) * 2f * Mathf.PI * _numZigZagSines;
+        _moveOffset.x = Mathf.Sin(sint) * _zigZagWidth;
+
+        _currentForward = mainBody.position - _lastBodyPosition;
+
+        if (_currentForward.sqrMagnitude > 0.0001f)
+        {
+            _currentForward = _currentForward.normalized;
+            Debug.DrawLine(mainBody.position, mainBody.position + _currentForward * 2);
+        }
+
+        _lastBodyPosition = mainBody.position;
+
+        Body.position = Vector3.Lerp(StartPos.position, EndPos.position, t) + _moveOffset;
     }
 
     public void StartShootBall()
