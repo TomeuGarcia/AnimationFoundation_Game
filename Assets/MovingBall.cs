@@ -195,9 +195,11 @@ public class MovingBall : MonoBehaviour
     
 
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (_ballWasShot) return;
+
+        if (Vector3.Distance(collision.collider.transform.position, _tailTarget.position) > 0.35f) return;
 
         _myOctopus.NotifyShoot(_interceptShotBall);
         _interceptShotBall = !_interceptShotBall;
@@ -206,7 +208,6 @@ public class MovingBall : MonoBehaviour
 
         _ballWasShot = true;
         _blueTarget.canMove = false;
-
     }
 
     public void ResetStateToStart()

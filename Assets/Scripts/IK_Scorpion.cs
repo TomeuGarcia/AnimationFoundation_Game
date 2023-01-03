@@ -115,8 +115,7 @@ public class IK_Scorpion : MonoBehaviour
 
             _reset = false; // toggle reset off
         }
-
-        _futureLegBasesHolder.rotation = Quaternion.AngleAxis(mainBody.rotation.eulerAngles.y, Vector3.up);
+        
         _myController.UpdateIK();        
     }
     
@@ -238,12 +237,10 @@ public class IK_Scorpion : MonoBehaviour
 
         for (int legI = 0; legI < futureLegBases.Length; ++legI)
         {
-            RaycastHit hit;
-
             Vector3 hitOrigin = futureLegBases[legI].position + (-_futureLegBaseProbeDirection * _futureLegBaseOriginDisplacement);
-
             Debug.DrawLine(hitOrigin, hitOrigin + (_futureLegBaseProbeDirection * _futureLegBaseProbeDist), Color.magenta, Time.deltaTime);
 
+            RaycastHit hit;
             if (Physics.Raycast(hitOrigin, _futureLegBaseProbeDirection, out hit, _futureLegBaseProbeDist))
             {
                 futureLegBases[legI].position = hit.point;
@@ -276,6 +273,7 @@ public class IK_Scorpion : MonoBehaviour
 
             Debug.DrawLine(mainBody.position, mainBody.position - newForwardAxis * 2f);
 
+            // -_currentForward because by default scorpion faces the other way
             _desiredLookRotation = Quaternion.LookRotation(-_currentForward, newUpBodyAxis);
         }
     }
@@ -284,7 +282,9 @@ public class IK_Scorpion : MonoBehaviour
     {
         if (_currentForward.sqrMagnitude > 0.0001f)
         {
-            mainBody.rotation = Quaternion.RotateTowards(mainBody.rotation, _desiredLookRotation, 300f * Time.deltaTime);
+            mainBody.rotation = Quaternion.RotateTowards(mainBody.rotation, _desiredLookRotation, 200f * Time.deltaTime);
+
+            _futureLegBasesHolder.rotation = Quaternion.AngleAxis(mainBody.rotation.eulerAngles.y, Vector3.up);
         }
     }
 
