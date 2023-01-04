@@ -5,7 +5,7 @@ using OctopusController;
 
 public class IK_Scorpion : MonoBehaviour
 {
-    MyScorpionController _myController= new MyScorpionController();
+    MyScorpionController _myController = new MyScorpionController();
 
     public IK_tentacles _myOctopus;
 
@@ -27,6 +27,7 @@ public class IK_Scorpion : MonoBehaviour
     [Header("Tail")]
     public Transform tailTarget;
     public Transform tail;
+    private Quaternion[] _startTailRotations;
     private float tailTargetBallOffsetLength;
     private bool _isGoalTargetRightSide = false;
 
@@ -76,6 +77,8 @@ public class IK_Scorpion : MonoBehaviour
         _lastBodyPosition = mainBody.position;
 
         _numZigZagSines = (float)_numZigZags / 2f;
+
+        SetStartTailRotations();
     }
 
     // Update is called once per frame
@@ -100,6 +103,7 @@ public class IK_Scorpion : MonoBehaviour
         }
         else if (animTime >= animDuration && animPlaying)
         {
+            _myController.NotifyStartUpdateTail();
             Body.position = EndPos.position + _moveOffset;
             animPlaying = false;
         }
@@ -109,6 +113,9 @@ public class IK_Scorpion : MonoBehaviour
         {
             _myController.ResetLegs();
             _movingBall.ResetStateToStart();
+
+            ResetTailRotations();
+            _myController.ResetTailBoneAngles();
 
             _moveOffset = Vector3.zero;
             _lastBodyPosition = mainBody.position;
@@ -158,6 +165,7 @@ public class IK_Scorpion : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.Space))
         {
             StartShootBall();
+            SetTailLearningRate();
         }
 
         if (Input.GetKey(KeyCode.Z))
@@ -215,7 +223,7 @@ public class IK_Scorpion : MonoBehaviour
 
     private void SetTailTargetPosition(Vector3 offsetDirection)
     {
-        tailTarget.localPosition = offsetDirection * tailTargetBallOffsetLength;
+        _movingBall.SetTailTargetLocalPosition(offsetDirection * tailTargetBallOffsetLength);
     }
 
 
@@ -286,6 +294,37 @@ public class IK_Scorpion : MonoBehaviour
 
             _futureLegBasesHolder.rotation = Quaternion.AngleAxis(mainBody.rotation.eulerAngles.y, Vector3.up);
         }
+    }
+
+    private void SetTailLearningRate()
+    {
+        _myController.SetLearningRate(Mathf.Lerp(2.0f, 10.0f, _uiController.GetStrengthPer1()));
+    }
+
+    private void SetStartTailRotations()
+    {
+        List<Quaternion> startTailRotations = new List<Quaternion>();
+        Transform tailBone = tail;
+        while (tailBone.childCount > 0)
+        {
+            startTailRotations.Add(tailBone.rotation);
+            tailBone = tailBone.GetChild(1);
+        }
+        startTailRotations.Add(tailBone.rotation);
+        _startTailRotations = startTailRotations.ToArray();
+    }
+
+    private void ResetTailRotations()
+    {
+        int i = 0;
+        Transform tailBone = tail;
+        while (tailBone.childCount > 0)
+        {
+            tailBone.rotation = _startTailRotations[i];
+            tailBone = tailBone.GetChild(1);
+            ++i;
+        }
+        tailBone.rotation = _startTailRotations[i];
     }
 
 }

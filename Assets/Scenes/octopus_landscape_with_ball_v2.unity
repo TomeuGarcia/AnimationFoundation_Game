@@ -5723,6 +5723,8 @@ GameObject:
   - component: {fileID: 1169213016}
   - component: {fileID: 1169213018}
   - component: {fileID: 1169213017}
+  - component: {fileID: 1169213019}
+  - component: {fileID: 1169213020}
   m_Layer: 0
   m_Name: TailTarget
   m_TagString: Untagged
@@ -5795,6 +5797,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1169213019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169213015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69da3c3a327ab5940816ff687fa71e5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!135 &1169213020
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169213015}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.0016804207
+  m_Center: {x: -1.16415315e-10, y: 0, z: 0.00000023841858}
 --- !u!1 &1172727218
 GameObject:
   m_ObjectHideFlags: 0
@@ -8104,19 +8131,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1938829478}
   m_PrefabAsset: {fileID: 0}
---- !u!135 &1938829482
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1938829479}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.0016804212
-  m_Center: {x: -1.1641532e-10, y: 0, z: 0}
 --- !u!4 &1938829484 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 70f145abed0b4ae48acf34cbafba0570,
@@ -8141,6 +8155,7 @@ MonoBehaviour:
   _blueTarget: {fileID: 1418656081}
   _movementSpeed: 1
   _tailTarget: {fileID: 1169213016}
+  _movingBallTarget: {fileID: 1169213019}
   _greyArrowPrefab: {fileID: 100000, guid: e8d27f717d3fadc42b69939e9947bac6, type: 3}
   _bluePointsPrefab: {fileID: 4184867847626841259, guid: 9e66bfdfb13bb644eb6acc37981ad156,
     type: 3}
@@ -8948,6 +8963,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916246023654304624, guid: c9ae8800298c5904a805978e2ff06201,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99447626
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916246023654304624, guid: c9ae8800298c5904a805978e2ff06201,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.104962446
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916246023654304624, guid: c9ae8800298c5904a805978e2ff06201,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916246023654304624, guid: c9ae8800298c5904a805978e2ff06201,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916246023654304624, guid: c9ae8800298c5904a805978e2ff06201,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -12.05
       objectReference: {fileID: 0}
     - target: {fileID: 2151272713348124754, guid: c9ae8800298c5904a805978e2ff06201,
         type: 3}

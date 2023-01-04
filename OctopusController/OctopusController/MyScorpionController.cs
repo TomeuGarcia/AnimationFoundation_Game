@@ -71,7 +71,7 @@ namespace OctopusController
         float[] _legsMoveBaseTimer;
         float _legsMoveDuration = 0.10f;
         bool _startedWalking = false;
-        bool _updateTail = true;
+        bool _updateTail = false;
 
         float _legMoveHeight = 0.4f;
 
@@ -166,6 +166,22 @@ namespace OctopusController
             tailEndEffector = _tail.EndEffectorSphere;
         }
 
+        public void ResetTailBoneAngles()
+        {
+            for (int i = 0; i < _tail.Bones.Length; ++i)
+            {
+                if (i == 0)
+                {
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.z;
+
+                }
+                else
+                {
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.x;
+                }
+            }
+        }
+
         //TODO: Check when to start the animation towards target and implement Gradient Descent method to move the joints.
         public void NotifyTailTarget(Transform target)
         {
@@ -179,6 +195,10 @@ namespace OctopusController
         public void NotifyStartWalk()
         {
             _startedWalking = true;
+        }
+
+        public void NotifyStartUpdateTail()
+        {
             _updateTail = true;
         }
 
@@ -369,6 +389,11 @@ namespace OctopusController
         }
 
 
+
+        public void SetLearningRate(float learningRate)
+        {
+            LearningRate = learningRate;
+        }
 
         //TODO: implement Gradient Descent method to move tail if necessary
         private void updateTail()
