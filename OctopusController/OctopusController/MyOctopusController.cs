@@ -114,8 +114,6 @@ namespace OctopusController
             _currentRegion = region;
             _target = target;
 
-
-
             if (regionToTentacleIndex.ContainsKey(region))
             {
                 _tentacleToTargetIndex = regionToTentacleIndex[region];
@@ -187,12 +185,10 @@ namespace OctopusController
                 if (_interceptShotBall && tentacleI == _tentacleToTargetIndex)
                 {
                     tentacleTargetPos = Vector3.Lerp(_randomTargets[tentacleI].position, _target.position, _moveToTargetTimer / _moveToTargetDuration);
-                    Debug.Log("LERPING");
                 }
                 else
                 {
                     tentacleTargetPos = _randomTargets[tentacleI].position;
-                    Debug.Log("NOT lerping");
                 }
 
                 _done = false;
@@ -286,11 +282,11 @@ namespace OctopusController
 
         private void ClampBoneRotation(Transform bone)
         {
-            Quaternion swingLocalRotation = GetSwing(bone.transform.localRotation, Vector3.up);
+            Quaternion swingLocalRotation = GetSwing(bone.localRotation, Vector3.up);
 
             Quaternion clampedLocalRotation = GetClampedQuaternion(swingLocalRotation, _clampedAnglesMin, _clampedAnglesMax);
 
-            bone.transform.localRotation = clampedLocalRotation;
+            bone.localRotation = clampedLocalRotation;
         }
 
         private Quaternion GetTwist(Quaternion rotation , Vector3 twistAxis)

@@ -42,6 +42,8 @@ public class MovingBall : MonoBehaviour
     private float _shootStrengthPer1 = 0f;
 
     //MAGNUS
+    readonly float _ballMass = 1f;
+    readonly float _maxAngularVelocityMagnitude = 10f;
 
     Vector3 _instantLinearVelocity;
     Vector3 _angularVelocity;
@@ -193,9 +195,11 @@ public class MovingBall : MonoBehaviour
     
 
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (_ballWasShot) return;
+
+        if (Vector3.Distance(collision.collider.transform.position, _tailTarget.position) > 0.35f) return;
 
         _myOctopus.NotifyShoot(_interceptShotBall);
         _interceptShotBall = !_interceptShotBall;
@@ -204,7 +208,6 @@ public class MovingBall : MonoBehaviour
 
         _ballWasShot = true;
         _blueTarget.canMove = false;
-
     }
 
     public void ResetStateToStart()
@@ -248,16 +251,16 @@ public class MovingBall : MonoBehaviour
     public Vector3 ComputeAcceleration(Vector3 angularVelocity, Vector3 instantLinearVelocity)
     {
         _magnusForce = ComputeMagnusForce(angularVelocity, instantLinearVelocity);
-        return _gravityVector + _magnusForce;
+        return (_gravityVector + _magnusForce) / _ballMass;
     }
 
-    private Vector3 ComputeAngularVelocity() // Ca ve Reviewed, doubting if the units are correct
+    private Vector3 ComputeAngularVelocity() 
     {
-        //We have created all these Vector3 to make it more llegible
-        Vector3 impactPoint = ((_tailTarget.position - Position).normalized * _ballRadius);
-        Vector3 angularMomentum = Vector3.Cross(impactPoint,_startVelocity); //sliderValue * target - position
+        //We have created all these Vector3 to make it more readable
+        Vector3 impactPoint = (_tailTarget.position - Position).normalized * _ballRadius;
+        Vector3 angularMomentum = Vector3.Cross(impactPoint, _startVelocity);
         Vector3 torque = angularMomentum;
-        Vector3 angularVelocity = torque * Mathf.Lerp(0,10,_uiController.GetEffectStrengthPer1());
+        Vector3 angularVelocity = torque * Mathf.Lerp(0f, _maxAngularVelocityMagnitude, _uiController.GetEffectStrengthPer1());
 
         return angularVelocity;
     }
@@ -367,9 +370,6 @@ public class MovingBall : MonoBehaviour
 
     private void SetGreenArrowsTransform()
     {
-
-        //--------------------------NEED TO CHANGE AND ADD MAGNUS FORCES------------------------
-
         _greenVelocityArrow.rotation = Quaternion.LookRotation(_instantLinearVelocity.normalized, Vector3.up);
     }
 

@@ -73,6 +73,8 @@ namespace OctopusController
         bool _startedWalking = false;
         bool _updateTail = true;
 
+        float _legMoveHeight = 0.4f;
+
         private List<Vector3[]> _originalLegsPositions;
         private List<Quaternion[]> _originalLegsRotations;
 
@@ -223,9 +225,6 @@ namespace OctopusController
             {
                 float futureBaseDistance = Vector3.Distance(_legs[legI].Bones[0].position, legFutureBases[legI].position);
 
-                
-
-
                 if (futureBaseDistance > _legFarAwayThreashold && !_legIsMoving[legI])
                 {
                     // start reposition leg's base
@@ -241,8 +240,7 @@ namespace OctopusController
                 {
                     _legsMoveBaseTimer[legI] += Time.deltaTime;
                     float t = _legsMoveBaseTimer[legI] / _legsMoveDuration;
-
-                    _legs[legI].Bones[0].position = Vector3.Lerp(_legsBaseOrigin[legI], _legsBaseDestination[legI], t);
+                    _legs[legI].Bones[0].position = ComputeBaseBonePosition(legI, t);
 
                     if (t > 0.999f)
                     {
@@ -399,7 +397,7 @@ namespace OctopusController
             }
 
             // TODO (done)
-            // Aplly rotations
+            // Apply rotations
             for (int i = 0; i < _tailBoneAngles.Length; i++)
             {
                 //_tail.Bones[i].localRotation = Quaternion.identity;
@@ -424,11 +422,12 @@ namespace OctopusController
         {
             //TODO
             Solution[i] += delta; // Temporaraly get delta solution
-            float deltaDistamceFromTarget = _errorFunction(target, Solution);
+            float deltaDistanceFromTarget = _errorFunction(target, Solution);
 
             Solution[i] -= delta; // Reset Solution
+            float distanceFromTarget = _errorFunction(target, Solution);
 
-            return (deltaDistamceFromTarget - _errorFunction(target, Solution)) / delta;
+            return (deltaDistanceFromTarget - distanceFromTarget) / delta;
         }
 
         // Returns the distance from the target, given a solution
@@ -449,7 +448,7 @@ namespace OctopusController
 
             // Takes object initial rotation into account
             //Quaternion rotation = transform.rotation;
-            Quaternion rotation = Quaternion.AngleAxis(_tail.Bones[0].localEulerAngles.x, Vector3.right); // ??? ask if correct
+            Quaternion rotation = Quaternion.AngleAxis(_tail.Bones[0].localEulerAngles.x, Vector3.right);
 
             //TODO (done)
             for (int i = 0; i < Solution.Length - 1; ++i)
@@ -476,5 +475,18 @@ namespace OctopusController
         }
 
 
+
+        private Vector3 ComputeBaseBonePosition(int legI, float t)
+        {
+            Vector3 bonePosition = Vector3.Lerp(_legsBaseOrigin[legI], _legsBaseDestination[legI], t);
+            
+            // Add Y displacement
+            bonePosition += Mathf.Sin(t * Mathf.PI) * _legMoveHeight * Vector3.up;
+
+            return bonePosition;
+        }
+
     }
+
+
 }
