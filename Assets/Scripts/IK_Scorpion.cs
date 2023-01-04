@@ -27,6 +27,7 @@ public class IK_Scorpion : MonoBehaviour
     [Header("Tail")]
     public Transform tailTarget;
     public Transform tail;
+    public Transform[] _tailBones;
     private Quaternion[] _startTailRotations;
     private float tailTargetBallOffsetLength;
     private bool _isGoalTargetRightSide = false;
@@ -304,27 +305,27 @@ public class IK_Scorpion : MonoBehaviour
     private void SetStartTailRotations()
     {
         List<Quaternion> startTailRotations = new List<Quaternion>();
+        List<Transform> tailBones = new List<Transform>();
         Transform tailBone = tail;
         while (tailBone.childCount > 0)
         {
             startTailRotations.Add(tailBone.rotation);
+            tailBones.Add(tailBone);
             tailBone = tailBone.GetChild(1);
         }
         startTailRotations.Add(tailBone.rotation);
+        tailBones.Add(tailBone);
+
         _startTailRotations = startTailRotations.ToArray();
+        _tailBones = tailBones.ToArray();
     }
 
     private void ResetTailRotations()
     {
-        int i = 0;
-        Transform tailBone = tail;
-        while (tailBone.childCount > 0)
+        for (int i = 0; i < _tailBones.Length; ++i)
         {
-            tailBone.rotation = _startTailRotations[i];
-            tailBone = tailBone.GetChild(1);
-            ++i;
+            _tailBones[i].rotation = _startTailRotations[i];
         }
-        tailBone.rotation = _startTailRotations[i];
     }
 
 }
