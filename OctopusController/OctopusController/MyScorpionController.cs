@@ -397,7 +397,7 @@ namespace OctopusController
             }
 
             // TODO (done)
-            // Aplly rotations
+            // Apply rotations
             for (int i = 0; i < _tailBoneAngles.Length; i++)
             {
                 //_tail.Bones[i].localRotation = Quaternion.identity;
@@ -422,11 +422,12 @@ namespace OctopusController
         {
             //TODO
             Solution[i] += delta; // Temporaraly get delta solution
-            float deltaDistamceFromTarget = _errorFunction(target, Solution);
+            float deltaDistanceFromTarget = _errorFunction(target, Solution);
 
             Solution[i] -= delta; // Reset Solution
+            float distanceFromTarget = _errorFunction(target, Solution);
 
-            return (deltaDistamceFromTarget - _errorFunction(target, Solution)) / delta;
+            return (deltaDistanceFromTarget - distanceFromTarget) / delta;
         }
 
         // Returns the distance from the target, given a solution
@@ -447,7 +448,7 @@ namespace OctopusController
 
             // Takes object initial rotation into account
             //Quaternion rotation = transform.rotation;
-            Quaternion rotation = Quaternion.AngleAxis(_tail.Bones[0].localEulerAngles.x, Vector3.right); // ??? ask if correct
+            Quaternion rotation = Quaternion.AngleAxis(_tail.Bones[0].localEulerAngles.x, Vector3.right);
 
             //TODO (done)
             for (int i = 0; i < Solution.Length - 1; ++i)
