@@ -55,6 +55,8 @@ namespace OctopusController
 
         private float _distanceWeight = 1f;
         private float _orientationWeight = 1f;
+        private Vector3 _targetOrientationDirection;
+        private Vector3 _endEffectorOrientationDirection;
 
 
         //LEGS
@@ -164,7 +166,8 @@ namespace OctopusController
             }            
 
 
-            _errorFunction = DistanceFromTarget;
+            //_errorFunction = DistanceFromTarget;
+            _errorFunction = DistanceFromTargetAndOrientation;
 
             tailEndEffector = _tail.EndEffectorSphere;
         }
@@ -450,10 +453,13 @@ namespace OctopusController
         {
             //TODO
             Solution[i] += delta; // Temporaraly get delta solution
+            // TEMPORARELY ROTATE _endEffectorOrientationDirection HERE !!!!!!!!!!!!!!!!!!!!!!!
             float deltaDistanceFromTarget = _errorFunction(target, Solution);
 
             Solution[i] -= delta; // Reset Solution
             float distanceFromTarget = _errorFunction(target, Solution);
+
+            Debug.Log("DG: " + (deltaDistanceFromTarget - distanceFromTarget) / delta);
 
             return (deltaDistanceFromTarget - distanceFromTarget) / delta;
         }
@@ -467,11 +473,18 @@ namespace OctopusController
 
         private float OrientationToTarget()
         {
-            return 0f;
+            float dot = Vector3.Dot(_targetOrientationDirection, _endEffectorOrientationDirection);
+
+            // Express dot result in range [0, 2]
+            dot = Mathf.Abs(dot - 1f);
+
+            return dot;
         }
 
         public float DistanceFromTargetAndOrientation(Vector3 target, float[] Solution)
         {
+            Debug.Log(OrientationToTarget() * _orientationWeight);
+            Debug.Log(DistanceFromTarget(target, Solution) * _distanceWeight + OrientationToTarget() * _orientationWeight);
             return DistanceFromTarget(target, Solution) * _distanceWeight + OrientationToTarget() * _orientationWeight;
         }
 
@@ -479,6 +492,12 @@ namespace OctopusController
         {
             _distanceWeight = distanceWeight;
             _orientationWeight = orientationWeight;
+        }
+
+        public void SetOrientationDirections(Vector3 targetOrientationDirection, Vector3 endEffectorOrientationDirection)
+        {
+            _targetOrientationDirection = targetOrientationDirection;
+            _endEffectorOrientationDirection = endEffectorOrientationDirection;
         }
 
         /* Simulates the forward kinematics,

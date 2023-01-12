@@ -27,7 +27,9 @@ public class IK_Scorpion : MonoBehaviour
     [Header("Tail")]
     public Transform tailTarget;
     public Transform tail;
-    public Transform[] _tailBones;
+    private Transform _tailEE;
+    private Vector3 _tailEEForward;
+    private Transform[] _tailBones;
     private Quaternion[] _startTailRotations;
     private float tailTargetBallOffsetLength;
     private bool _isGoalTargetRightSide = false;
@@ -68,6 +70,7 @@ public class IK_Scorpion : MonoBehaviour
     {
         _myController.InitLegs(legs,futureLegBases,legTargets);
         _myController.InitTail(tail);
+        _myController.SetDistanceAndOrientationWeight(1.0f, 2000.0f);
 
         tailTargetBallOffsetLength = _movingBall._ballRadius * 2;
         SetTailTargetPosition(Vector3.forward);
@@ -87,6 +90,7 @@ public class IK_Scorpion : MonoBehaviour
     {
         NotifyTailTarget();
         UpdateInputs();
+        ComputeTailEEForward();
 
         if (!_movingBall.BallWasShot)
         {
@@ -100,7 +104,7 @@ public class IK_Scorpion : MonoBehaviour
             MoveBody();            
             ComputeTailTargetPosition();
             UpdateLegsAndBody();
-            RotateBody();
+            RotateBody();                   
         }
         else if (animTime >= animDuration && animPlaying)
         {
@@ -124,7 +128,7 @@ public class IK_Scorpion : MonoBehaviour
             _reset = false; // toggle reset off
         }
         
-        _myController.UpdateIK();        
+        _myController.UpdateIK();    
     }
     
     //Function to send the tail target transform to the dll
@@ -318,6 +322,8 @@ public class IK_Scorpion : MonoBehaviour
 
         _startTailRotations = startTailRotations.ToArray();
         _tailBones = tailBones.ToArray();
+
+        _tailEE = _tailBones[_tailBones.Length - 1];
     }
 
     private void ResetTailRotations()
@@ -326,6 +332,20 @@ public class IK_Scorpion : MonoBehaviour
         {
             _tailBones[i].rotation = _startTailRotations[i];
         }
+    }
+
+    private void ComputeTailEEForward()
+    {
+        //_tailEEForward = _tailEE.TransformDirection(_tailEE.forward);
+        //_tailEEForward = _tailEE.forward;
+        _tailEEForward = (_movingBall.Position - _tailEE.position).normalized;
+        
+        Debug.DrawLine(_tailEE.position, _tailEE.position + _tailEEForward, Color.red);
+        Debug.DrawLine(_tailEE.position, _tailEE.position + _ballHitToCenterDir, Color.green);
+
+        //Debug.DrawLine(_tailEE.position, _tailEE.position + _tailEEForward);
+        _myController.SetOrientationDirections(_ballHitToCenterDir, _tailEEForward);
+
     }
 
 }
