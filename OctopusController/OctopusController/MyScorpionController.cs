@@ -53,6 +53,9 @@ namespace OctopusController
         public float StopThreshold = 0.01f; // If closer than this, it stops
         public float SlowdownThreshold = 0.25f; // If closer than this, it linearly slows down
 
+        private float _distanceWeight = 1f;
+        private float _orientationWeight = 1f;
+
 
         //LEGS
         Transform[] legTargets;
@@ -462,6 +465,21 @@ namespace OctopusController
             return Vector3.Distance(point, target);
         }
 
+        private float OrientationToTarget()
+        {
+            return 0f;
+        }
+
+        public float DistanceFromTargetAndOrientation(Vector3 target, float[] Solution)
+        {
+            return DistanceFromTarget(target, Solution) * _distanceWeight + OrientationToTarget() * _orientationWeight;
+        }
+
+        public void SetDistanceAndOrientationWeight(float distanceWeight, float orientationWeight)
+        {
+            _distanceWeight = distanceWeight;
+            _orientationWeight = orientationWeight;
+        }
 
         /* Simulates the forward kinematics,
          * given a solution. */
