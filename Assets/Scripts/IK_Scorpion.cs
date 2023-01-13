@@ -7,8 +7,6 @@ public class IK_Scorpion : MonoBehaviour
 {
     MyScorpionController _myController = new MyScorpionController();
 
-    public IK_tentacles _myOctopus;
-
     [Header("Body")]
     float animTime;
     public float animDuration = 5;
@@ -58,6 +56,7 @@ public class IK_Scorpion : MonoBehaviour
     [SerializeField, Min(0f)] private float _zigZagWidth = 2f;
     [SerializeField, Min(0)] private int _numZigZags = 2;
     private float _numZigZagSines;
+    bool _arribedShootingSpot = false;
 
     readonly float _futureLegBaseOriginDisplacement = 2f;
     readonly float _futureLegBaseProbeDist = 5f;
@@ -70,7 +69,7 @@ public class IK_Scorpion : MonoBehaviour
     {
         _myController.InitLegs(legs,futureLegBases,legTargets);
         _myController.InitTail(tail);
-        _myController.SetDistanceAndOrientationWeight(1.0f, 2000.0f);
+        ResetTailWeights();
 
         tailTargetBallOffsetLength = _movingBall._ballRadius * 2;
         SetTailTargetPosition(Vector3.forward);
@@ -90,7 +89,6 @@ public class IK_Scorpion : MonoBehaviour
     {
         NotifyTailTarget();
         UpdateInputs();
-        ComputeTailEEForward();
 
         if (!_movingBall.BallWasShot)
         {
@@ -108,14 +106,21 @@ public class IK_Scorpion : MonoBehaviour
         }
         else if (animTime >= animDuration && animPlaying)
         {
+            SetTailHitOrientation();
             _myController.NotifyStartUpdateTail();
             Body.position = EndPos.position + _moveOffset;
             animPlaying = false;
+            _arribedShootingSpot = true;
+            _movingBall.StopTargetMovement();
+            ResetTailWeights();
+
+            StartCoroutine(TailWeightChange());
         }
 
         // Reset legs after updating Body's position, just in case
         if (_reset)
         {
+            _myController.NotifyStopUpdateTail();
             _myController.ResetLegs();
             _movingBall.ResetStateToStart();
 
@@ -124,6 +129,8 @@ public class IK_Scorpion : MonoBehaviour
 
             _moveOffset = Vector3.zero;
             _lastBodyPosition = mainBody.position;
+
+            _arribedShootingSpot = false;
 
             _reset = false; // toggle reset off
         }
@@ -143,14 +150,9 @@ public class IK_Scorpion : MonoBehaviour
         _myController.NotifyStartWalk();
     }
 
-    public void NotifyStopWalk()
-    {
-        _myController.NotifyStopWalk();
-    }
-
     public void NotifyShoot()
     {
-        NotifyStopWalk();
+        _myController.NotifyStopUpdateTail();
     }
 
 
@@ -173,14 +175,17 @@ public class IK_Scorpion : MonoBehaviour
             SetTailLearningRate();
         }
 
-        if (Input.GetKey(KeyCode.Z))
+        if (!_arribedShootingSpot)
         {
-            _uiController.UpdateEffectStrengthSlider(-1);
-        }
-        else if (Input.GetKey(KeyCode.X))
-        {
-            _uiController.UpdateEffectStrengthSlider(1);
-        }
+            if (Input.GetKey(KeyCode.Z))
+            {
+                _uiController.UpdateEffectStrengthSlider(-1);
+            }
+            else if (Input.GetKey(KeyCode.X))
+            {
+                _uiController.UpdateEffectStrengthSlider(1);
+            }
+        }        
     }
 
     private void MoveBody()
@@ -194,7 +199,7 @@ public class IK_Scorpion : MonoBehaviour
         if (_currentForward.sqrMagnitude > 0.0001f)
         {
             _currentForward = _currentForward.normalized;
-            Debug.DrawLine(mainBody.position, mainBody.position + _currentForward * 2);
+            //Debug.DrawLine(mainBody.position, mainBody.position + _currentForward * 2);
         }
 
         _lastBodyPosition = mainBody.position;
@@ -251,7 +256,7 @@ public class IK_Scorpion : MonoBehaviour
         for (int legI = 0; legI < futureLegBases.Length; ++legI)
         {
             Vector3 hitOrigin = futureLegBases[legI].position + (-_futureLegBaseProbeDirection * _futureLegBaseOriginDisplacement);
-            Debug.DrawLine(hitOrigin, hitOrigin + (_futureLegBaseProbeDirection * _futureLegBaseProbeDist), Color.magenta, Time.deltaTime);
+            //Debug.DrawLine(hitOrigin, hitOrigin + (_futureLegBaseProbeDirection * _futureLegBaseProbeDist), Color.magenta, Time.deltaTime);
 
             RaycastHit hit;
             if (Physics.Raycast(hitOrigin, _futureLegBaseProbeDirection, out hit, _futureLegBaseProbeDist))
@@ -284,7 +289,7 @@ public class IK_Scorpion : MonoBehaviour
             Vector3 newUpBodyAxis = Vector3.Cross(_currentForward, newRightBodyAxis).normalized;
             Vector3 newForwardAxis = Vector3.Cross(newUpBodyAxis, newRightBodyAxis).normalized;
 
-            Debug.DrawLine(mainBody.position, mainBody.position - newForwardAxis * 2f);
+            //Debug.DrawLine(mainBody.position, mainBody.position - newForwardAxis * 2f);
 
             // -_currentForward because by default scorpion faces the other way
             _desiredLookRotation = Quaternion.LookRotation(-_currentForward, newUpBodyAxis);
@@ -303,7 +308,7 @@ public class IK_Scorpion : MonoBehaviour
 
     private void SetTailLearningRate()
     {
-        _myController.SetLearningRate(Mathf.Lerp(2.0f, 10.0f, _uiController.GetStrengthPer1()));
+        _myController.SetLearningRate(Mathf.Lerp(5.0f, 15.0f, _uiController.GetStrengthPer1()));
     }
 
     private void SetStartTailRotations()
@@ -334,18 +339,30 @@ public class IK_Scorpion : MonoBehaviour
         }
     }
 
-    private void ComputeTailEEForward()
+    private void SetTailHitOrientation()
     {
         //_tailEEForward = _tailEE.TransformDirection(_tailEE.forward);
         //_tailEEForward = _tailEE.forward;
-        _tailEEForward = (_movingBall.Position - _tailEE.position).normalized;
-        
-        Debug.DrawLine(_tailEE.position, _tailEE.position + _tailEEForward, Color.red);
-        Debug.DrawLine(_tailEE.position, _tailEE.position + _ballHitToCenterDir, Color.green);
+        //_tailEEForward = (_movingBall.Position - _tailEE.position).normalized;
+        //_tailEEForward = (_tailEE.position - _tailEE.parent.position).normalized;
+
+
+        //Debug.DrawLine(_tailEE.position, _tailEE.position + _tailEEForward, Color.red);
+        //Debug.DrawLine(_tailEE.position, _tailEE.position + _ballHitToCenterDir, Color.green);
 
         //Debug.DrawLine(_tailEE.position, _tailEE.position + _tailEEForward);
-        _myController.SetOrientationDirections(_ballHitToCenterDir, _tailEEForward);
+        _myController.SetOrientationDirections(_ballHitToCenterDir);
 
     }
 
+    private void ResetTailWeights()
+    {
+        _myController.SetDistanceAndOrientationWeight(0.0f, 1.0f);
+    }
+
+    private IEnumerator TailWeightChange()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _myController.SetDistanceAndOrientationWeight(5.0f, 0.0f);
+    }
 }

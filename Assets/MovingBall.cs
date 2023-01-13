@@ -194,7 +194,10 @@ public class MovingBall : MonoBehaviour
     }
 
     
-
+    public void StopTargetMovement()
+    {
+        _blueTarget.canMove = false;
+    }
 
     private void OnCollisionWithScorpionTail()
     {
@@ -206,7 +209,6 @@ public class MovingBall : MonoBehaviour
         _myScorpion.NotifyShoot();
 
         _ballWasShot = true;
-        _blueTarget.canMove = false;
     }
 
     public void ResetStateToStart()

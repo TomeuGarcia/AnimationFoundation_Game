@@ -49,7 +49,7 @@ namespace OctopusController
 
         readonly float _targetDuration = 3f;
         float _targetTimer = 0f;
-        readonly float _moveToTargetDuration = 1.5f;
+        readonly float _moveToTargetDuration = 0.75f;
         float _moveToTargetTimer = 0f;
 
 

@@ -57,6 +57,7 @@ namespace OctopusController
         private float _orientationWeight = 1f;
         private Vector3 _targetOrientationDirection;
         private Vector3 _endEffectorOrientationDirection;
+        private float _angleBetweenOrientationVectors;
 
 
         //LEGS
@@ -151,8 +152,8 @@ namespace OctopusController
 
                 if (i == 0)
                 {
-                    _tailBoneAxis[i] = Vector3.forward; // Allows tail to rotate sideways
-                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.z;
+                    _tailBoneAxis[i] = Vector3.up; // Allows tail to rotate sideways
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.y;
                     _tailBoneOffsets[i] = _tail.Bones[i].position;
 
                 }
@@ -178,7 +179,7 @@ namespace OctopusController
             {
                 if (i == 0)
                 {
-                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.z;
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.y;
 
                 }
                 else
@@ -208,7 +209,7 @@ namespace OctopusController
             _updateTail = true;
         }
 
-        public void NotifyStopWalk()
+        public void NotifyStopUpdateTail()
         {
             _updateTail = false;
         }
@@ -437,7 +438,8 @@ namespace OctopusController
                 if (i == 0)
                 {
                     _tail.Bones[i].localEulerAngles =
-                        new Vector3(localEulerAngles.x, localEulerAngles.y, 0) + new Vector3(0, 0, _tailBoneAngles[i]);
+                        new Vector3(localEulerAngles.x, 0, localEulerAngles.z) + new Vector3(0, _tailBoneAngles[i], 0);
+                        //new Vector3(localEulerAngles.x, localEulerAngles.y, 0) + new Vector3(0, 0, _tailBoneAngles[i]);
                 }
                 else
                 {
@@ -451,15 +453,11 @@ namespace OctopusController
 
         public float CalculateGradient(Vector3 target, float[] Solution, int i, float delta)
         {
-            //TODO
             Solution[i] += delta; // Temporaraly get delta solution
-            // TEMPORARELY ROTATE _endEffectorOrientationDirection HERE !!!!!!!!!!!!!!!!!!!!!!!
             float deltaDistanceFromTarget = _errorFunction(target, Solution);
 
             Solution[i] -= delta; // Reset Solution
             float distanceFromTarget = _errorFunction(target, Solution);
-
-            Debug.Log("DG: " + (deltaDistanceFromTarget - distanceFromTarget) / delta);
 
             return (deltaDistanceFromTarget - distanceFromTarget) / delta;
         }
@@ -481,11 +479,19 @@ namespace OctopusController
             return dot;
         }
 
+
         public float DistanceFromTargetAndOrientation(Vector3 target, float[] Solution)
         {
-            Debug.Log(OrientationToTarget() * _orientationWeight);
-            Debug.Log(DistanceFromTarget(target, Solution) * _distanceWeight + OrientationToTarget() * _orientationWeight);
-            return DistanceFromTarget(target, Solution) * _distanceWeight + OrientationToTarget() * _orientationWeight;
+            PositionRotation posRot = ForwardKinematics(Solution);
+            Vector3 point = posRot;
+            Quaternion rotation = posRot;
+            _endEffectorOrientationDirection = rotation * _tailBoneOffsets[_tailBoneOffsets.Length-1].normalized;
+
+            // Debug draw line
+            //Vector3 bonePos = _tail.Bones[_tail.Bones.Length - 1].position;
+            //Debug.DrawLine(bonePos, bonePos + _endEffectorOrientationDirection, Color.magenta);
+
+            return Vector3.Distance(point, target) * _distanceWeight + OrientationToTarget() * _orientationWeight;
         }
 
         public void SetDistanceAndOrientationWeight(float distanceWeight, float orientationWeight)
@@ -494,10 +500,9 @@ namespace OctopusController
             _orientationWeight = orientationWeight;
         }
 
-        public void SetOrientationDirections(Vector3 targetOrientationDirection, Vector3 endEffectorOrientationDirection)
+        public void SetOrientationDirections(Vector3 targetOrientationDirection)
         {
             _targetOrientationDirection = targetOrientationDirection;
-            _endEffectorOrientationDirection = endEffectorOrientationDirection;
         }
 
         /* Simulates the forward kinematics,
