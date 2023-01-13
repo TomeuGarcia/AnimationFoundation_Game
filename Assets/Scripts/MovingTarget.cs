@@ -27,11 +27,23 @@ public class MovingTarget: MonoBehaviour
 
     Vector3 _dir;
 
-   
-    
+    private Vector3 _startPosition;
+    public Vector3 Position => transform.position;
+
+    public bool canMove = false;
+
+
+    public void ResetPosition()
+    {
+        transform.position = _startPosition;
+    }
+
 
     //variable added just to control whether we are 
-   
+    private void Awake()
+    {
+        _startPosition = transform.position;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -49,10 +61,8 @@ public class MovingTarget: MonoBehaviour
                 float a = Random.Range(0.0f,1.0f);
                 _dir = new Vector3(a, 1 - a, 0);
             }
-
-
-
         }
+
     }
 
 
@@ -61,7 +71,7 @@ public class MovingTarget: MonoBehaviour
 
         transform.rotation = Quaternion.identity;
 
-        if (_mode == MovingMode.USERTARGET)
+        if (_mode == MovingMode.USERTARGET && canMove)
         {
             //get the Input from Horizontal axis
             float horizontalInput = Input.GetAxis("Horizontal");
@@ -69,7 +79,8 @@ public class MovingTarget: MonoBehaviour
             float verticalInput = Input.GetAxis("Vertical");
 
             //update the position
-            transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, verticalInput * _movementSpeed * Time.deltaTime, 0);
+            transform.position = transform.position + new Vector3(-horizontalInput * _movementSpeed * Time.deltaTime, 
+                                                                   verticalInput * _movementSpeed * Time.deltaTime, 0);
 
        
         }
