@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\MovingTarget.cs" />
+    <Compile Include="Assets\Scripts\MovingBallTarget.cs" />
     <Compile Include="Assets\Scripts\LightBlink.cs" />
     <Compile Include="Assets\Scripts\NotifyRegion.cs" />
     <Compile Include="Assets\Scripts\IK_Scorpion.cs" />

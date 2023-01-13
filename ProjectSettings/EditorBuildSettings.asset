@@ -5,13 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/octopus_landscape_with_ball.unity
-    guid: c3fe175f20a2203499862029bd88602a
   - enabled: 1
     path: Assets/Scenes/octopus_landscape_with_ball_v2.unity
     guid: 246396afc7a357e468a98405ca3208e8
   - enabled: 0
-    path: Assets/Scenes/football_game.unity
-    guid: c4dc91fadc6f4374489647aa06b05b6c
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

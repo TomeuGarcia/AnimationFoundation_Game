@@ -54,6 +54,7 @@ public class MovingBall : MonoBehaviour
 
     bool _isRotatingClockwise;
     [SerializeField] private Transform _tailTarget;
+    [SerializeField] private MovingBallTarget _movingBallTarget;
 
     public readonly float _ballRadius = 0.0016f;
 
@@ -105,7 +106,7 @@ public class MovingBall : MonoBehaviour
         }
 
 
-
+        _movingBallTarget.OnCollidedWithTail += OnCollisionWithScorpionTail;
     }
 
     // Start is called before the first frame update
@@ -193,13 +194,14 @@ public class MovingBall : MonoBehaviour
     }
 
     
+    public void StopTargetMovement()
+    {
+        _blueTarget.canMove = false;
+    }
 
-
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionWithScorpionTail()
     {
         if (_ballWasShot) return;
-
-        if (Vector3.Distance(collision.collider.transform.position, _tailTarget.position) > 0.35f) return;
 
         _myOctopus.NotifyShoot(_interceptShotBall);
         _interceptShotBall = !_interceptShotBall;
@@ -207,7 +209,6 @@ public class MovingBall : MonoBehaviour
         _myScorpion.NotifyShoot();
 
         _ballWasShot = true;
-        _blueTarget.canMove = false;
     }
 
     public void ResetStateToStart()
@@ -390,6 +391,9 @@ public class MovingBall : MonoBehaviour
             _greyStartMagnusArrow.rotation = Quaternion.LookRotation(_magnusForce.normalized, Vector3.up);
     }
 
-
+    public void SetTailTargetLocalPosition(Vector3 localPosition)
+    {
+        _tailTarget.localPosition = localPosition;
+    }
 
 }

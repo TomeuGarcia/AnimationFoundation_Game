@@ -53,6 +53,12 @@ namespace OctopusController
         public float StopThreshold = 0.01f; // If closer than this, it stops
         public float SlowdownThreshold = 0.25f; // If closer than this, it linearly slows down
 
+        private float _distanceWeight = 1f;
+        private float _orientationWeight = 1f;
+        private Vector3 _targetOrientationDirection;
+        private Vector3 _endEffectorOrientationDirection;
+        private float _angleBetweenOrientationVectors;
+
 
         //LEGS
         Transform[] legTargets;
@@ -71,7 +77,7 @@ namespace OctopusController
         float[] _legsMoveBaseTimer;
         float _legsMoveDuration = 0.10f;
         bool _startedWalking = false;
-        bool _updateTail = true;
+        bool _updateTail = false;
 
         float _legMoveHeight = 0.4f;
 
@@ -146,8 +152,8 @@ namespace OctopusController
 
                 if (i == 0)
                 {
-                    _tailBoneAxis[i] = Vector3.forward; // Allows tail to rotate sideways
-                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.z;
+                    _tailBoneAxis[i] = Vector3.up; // Allows tail to rotate sideways
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.y;
                     _tailBoneOffsets[i] = _tail.Bones[i].position;
 
                 }
@@ -161,9 +167,26 @@ namespace OctopusController
             }            
 
 
-            _errorFunction = DistanceFromTarget;
+            //_errorFunction = DistanceFromTarget;
+            _errorFunction = DistanceFromTargetAndOrientation;
 
             tailEndEffector = _tail.EndEffectorSphere;
+        }
+
+        public void ResetTailBoneAngles()
+        {
+            for (int i = 0; i < _tail.Bones.Length; ++i)
+            {
+                if (i == 0)
+                {
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.y;
+
+                }
+                else
+                {
+                    _tailBoneAngles[i] = _tail.Bones[i].localEulerAngles.x;
+                }
+            }
         }
 
         //TODO: Check when to start the animation towards target and implement Gradient Descent method to move the joints.
@@ -179,10 +202,14 @@ namespace OctopusController
         public void NotifyStartWalk()
         {
             _startedWalking = true;
+        }
+
+        public void NotifyStartUpdateTail()
+        {
             _updateTail = true;
         }
 
-        public void NotifyStopWalk()
+        public void NotifyStopUpdateTail()
         {
             _updateTail = false;
         }
@@ -370,6 +397,11 @@ namespace OctopusController
 
 
 
+        public void SetLearningRate(float learningRate)
+        {
+            LearningRate = learningRate;
+        }
+
         //TODO: implement Gradient Descent method to move tail if necessary
         private void updateTail()
         {
@@ -406,7 +438,8 @@ namespace OctopusController
                 if (i == 0)
                 {
                     _tail.Bones[i].localEulerAngles =
-                        new Vector3(localEulerAngles.x, localEulerAngles.y, 0) + new Vector3(0, 0, _tailBoneAngles[i]);
+                        new Vector3(localEulerAngles.x, 0, localEulerAngles.z) + new Vector3(0, _tailBoneAngles[i], 0);
+                        //new Vector3(localEulerAngles.x, localEulerAngles.y, 0) + new Vector3(0, 0, _tailBoneAngles[i]);
                 }
                 else
                 {
@@ -420,7 +453,6 @@ namespace OctopusController
 
         public float CalculateGradient(Vector3 target, float[] Solution, int i, float delta)
         {
-            //TODO
             Solution[i] += delta; // Temporaraly get delta solution
             float deltaDistanceFromTarget = _errorFunction(target, Solution);
 
@@ -437,6 +469,41 @@ namespace OctopusController
             return Vector3.Distance(point, target);
         }
 
+        private float OrientationToTarget()
+        {
+            float dot = Vector3.Dot(_targetOrientationDirection, _endEffectorOrientationDirection);
+
+            // Express dot result in range [0, 2]
+            dot = Mathf.Abs(dot - 1f);
+
+            return dot;
+        }
+
+
+        public float DistanceFromTargetAndOrientation(Vector3 target, float[] Solution)
+        {
+            PositionRotation posRot = ForwardKinematics(Solution);
+            Vector3 point = posRot;
+            Quaternion rotation = posRot;
+            _endEffectorOrientationDirection = rotation * _tailBoneOffsets[_tailBoneOffsets.Length-1].normalized;
+
+            // Debug draw line
+            //Vector3 bonePos = _tail.Bones[_tail.Bones.Length - 1].position;
+            //Debug.DrawLine(bonePos, bonePos + _endEffectorOrientationDirection, Color.magenta);
+
+            return Vector3.Distance(point, target) * _distanceWeight + OrientationToTarget() * _orientationWeight;
+        }
+
+        public void SetDistanceAndOrientationWeight(float distanceWeight, float orientationWeight)
+        {
+            _distanceWeight = distanceWeight;
+            _orientationWeight = orientationWeight;
+        }
+
+        public void SetOrientationDirections(Vector3 targetOrientationDirection)
+        {
+            _targetOrientationDirection = targetOrientationDirection;
+        }
 
         /* Simulates the forward kinematics,
          * given a solution. */
